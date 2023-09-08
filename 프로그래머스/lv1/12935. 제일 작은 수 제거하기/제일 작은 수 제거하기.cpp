@@ -9,11 +9,9 @@ vector<int> solution(vector<int> arr) {
         answer.push_back(-1);
         return answer;
     }
-    else{
-        arr.erase(min_element(arr.begin(), arr.end()));
-        answer = arr;
-        return answer;
-    }
+    arr.erase(min_element(arr.begin(), arr.end()));
+    answer = arr;
+    return answer;
 }
 
 
