@@ -1,18 +1,19 @@
 #include <string>
 #include <vector>
 #include <algorithm>
-
 using namespace std;
 
 vector<int> solution(vector<int> arr) {
     vector<int> answer;
-    int minimum = arr[0];
-    for(int i=0;i<size(arr);i++){
-        minimum = min(minimum, arr[i]);
+    if(size(arr)==1){
+        answer.push_back(-1);
+        return answer;
     }
-    for(int i=0;i<size(arr);i++){
-        if(arr[i]!=minimum) answer.push_back(arr[i]);
+    else{
+        arr.erase(min_element(arr.begin(), arr.end()));
+        answer = arr;
+        return answer;
     }
-    if(size(answer)==0) answer.push_back(-1);
-    return answer;
 }
+
+
