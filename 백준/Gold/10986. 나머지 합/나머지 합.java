@@ -8,34 +8,28 @@ public class Main {
         int n = scanner.nextInt();
         int m = scanner.nextInt();
 
-        long[] arr = new long[n];
-        for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextLong();
-        }
+        int[] mod = new int[n];
 
-        long[] sum = new long[n];
-        sum[0] = arr[0];
+        mod[0] = scanner.nextInt() % m;
         for (int i = 1; i < n; i++) {
-            sum[i] = sum[i-1] + arr[i];
+            mod[i] = (mod[i-1] + scanner.nextInt()) % m;
         }
 
-        long[] check = new long[m];
-        long ans = 0;
+        int[] cnt = new int[m];
+        cnt[0] = 1;
         for (int i = 0; i < n; i++) {
-            sum[i] %= m;
-            if(sum[i] == 0){
-                ans++;
-            }
-            check[(int) sum[i]] ++;
-
+            cnt[mod[i]] ++;
         }
+
+        long result = 0;
         for (int i = 0; i < m; i++) {
-            if (check[i] > 1) {
-                ans += ((check[i] * (check[i]-1)) / 2);
+            if(cnt[i] > 1) {
+                result += ((long) cnt[i] * (cnt[i]-1)) / 2;
             }
         }
-        System.out.println(ans);
-    }
 
+        System.out.println(result);
+    }
 }
+
 
