@@ -7,20 +7,27 @@ public class Main {
 
         int n = scanner.nextInt();
 
-        int ans = 1;
-        for (int i = 1; i < n; i++) {
-            int sum = i;
-            for (int j = i+1; j < n; j++) {
-                sum += j;
-                if(sum > n) {
-                    break;
-                } else if(sum == n) {
-                    ans ++;
-                    break;
-                }
+        int start_idx = 1;
+        int end_idx = 1;
+        int sum = 1;
+        int result = 1;
+
+        while (end_idx < n) {
+            if (sum == n) {
+                result++;
+                end_idx ++;
+                sum += end_idx;
+            } else if (sum < n) {
+                end_idx ++;
+                sum += end_idx;
+            } else {
+                sum -= start_idx;
+                start_idx ++;
             }
         }
-        System.out.println(ans);
 
+        System.out.println(result);
     }
 }
+
+
