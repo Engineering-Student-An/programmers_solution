@@ -8,37 +8,37 @@ public class Main {
 
         int n = scanner.nextInt();
         int[] arr = new int[n];
-
         for (int i = 0; i < n; i++) {
             arr[i] = scanner.nextInt();
         }
+
         Arrays.sort(arr);
+        int result = 0;
 
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            int m = arr[i];
-            int start = 0;
-            int end = n-1;
-
-            while(start < end) {
-                int now = arr[start] + arr[end];
-                if(now == m) {
-                    if(start != i && end != i) {
-                        ans ++;
+        for (int i = 0; i < n; i ++) {
+            int start_idx = 0;
+            int end_idx = n-1;
+            while(start_idx < end_idx) {
+                int sum = arr[start_idx] + arr[end_idx];
+                if (sum == arr[i]) {
+                    if(start_idx != i && end_idx != i) {
+                        result ++;
                         break;
-                    } else if(start == i) {
-                        start ++;
+                    }
+                    else if(start_idx == i) {
+                        start_idx ++;
                     } else {
-                        end --;
+                        end_idx --;
                     }
 
-                } else if(now > m) {
-                    end --;
+                } else if(sum > arr[i]) {
+                    end_idx --;
                 } else {
-                    start ++;
+                    start_idx ++;
                 }
             }
         }
-        System.out.println(ans);
+
+        System.out.println(result);
     }
 }
