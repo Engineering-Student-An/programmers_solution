@@ -1,53 +1,53 @@
 import java.io.*;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Scanner;
 import java.util.StringTokenizer;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
 
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-
         int n = Integer.parseInt(st.nextToken());
         int l = Integer.parseInt(st.nextToken());
 
         st = new StringTokenizer(br.readLine());
-
-        Deque<Node> deque = new LinkedList<>();
-
+        int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
-            int now = Integer.parseInt(st.nextToken());
+            arr[i] = Integer.parseInt(st.nextToken());
+        }
 
-            while (!deque.isEmpty() && deque.getLast().value > now) {
+        Deque<Data> deque = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            Data data = new Data(arr[i], i);
+
+            while(!deque.isEmpty() && deque.getLast().value > data.value) {
                 deque.removeLast();
             }
-            deque.addLast(new Node(i, now));
+            deque.addLast(data);
 
-            if(l <= i - deque.getFirst().index) {
+            if(i-deque.getFirst().index >= l) {
                 deque.removeFirst();
             }
-            bw.write(deque.getFirst().value + " ");
 
+            bw.write(deque.getFirst().value + " ");
         }
+
         bw.flush();
         bw.close();
-
+        System.out.println(bw);
     }
 
-    static class Node {
-        int index;
+    static class Data {
         int value;
+        int index;
 
-        public Node(int index, int value) {
-            this.index = index;
+        public Data(int value, int index) {
             this.value = value;
+            this.index = index;
         }
     }
 }
