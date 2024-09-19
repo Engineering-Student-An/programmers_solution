@@ -1,50 +1,48 @@
 import java.io.*;
-import java.util.Scanner;
 import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Main {
-
     public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(bufferedReader.readLine());
+        int n = Integer.parseInt(st.nextToken());
+
+        st = new StringTokenizer(br.readLine());
 
         int[] arr = new int[n];
-        int[] ans = new int[n];
-
-        String[] strings = bufferedReader.readLine().split(" ");
         for (int i = 0; i < n; i++) {
-            arr[i] = Integer.parseInt(strings[i]);
-            ans[i] = -1;
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        Stack<Integer> stack = new Stack<>();
+        Stack<Data> stack = new Stack<>();
+        int[] result = new int[n];
 
         for (int i = 0; i < n; i++) {
-            if(stack.isEmpty()) {
-                stack.push(i);
-            } else {
-                while(!stack.isEmpty()) {
-                    int top = stack.peek();
-                    if(arr[top] < arr[i]) {
-                        ans[top] = arr[i];
-                        stack.pop();
-                    } else {
-                        break;
-                    }
-                }
-                stack.push(i);
+
+            while(!stack.isEmpty() && stack.peek().value < arr[i]) {
+                Data pop = stack.pop();
+                result[pop.index] = arr[i];
             }
+            stack.push(new Data(arr[i], i));
         }
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
-        for (int an : ans) {
-            bw.write(an + " ");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            sb.append((result[i] == 0 ? -1 : result[i])).append(" ");
         }
-        bw.flush();
-        bw.close();
+        System.out.print(sb);
     }
 
+    static class Data {
+        int value;
+        int index;
+
+        public Data(int value, int index) {
+            this.value = value;
+            this.index = index;
+        }
+    }
 }
