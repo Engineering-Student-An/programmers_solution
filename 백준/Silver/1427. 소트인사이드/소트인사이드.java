@@ -1,19 +1,33 @@
-import java.util.Arrays;
 import java.util.Scanner;
 
-public class Main{
+public class Main {
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);
         String num = scanner.next();
-        int[] arr = new int[num.length()];
 
+        int[] arr = new int[num.length()];
         for (int i = 0; i < num.length(); i++) {
-            arr[i] = num.charAt(i) - '0';
+            arr[i] = Integer.parseInt(String.valueOf(num.charAt(i)));
         }
 
-        Arrays.sort(arr);
-        for (int i = arr.length-1; i >= 0; i--) {
+        int n = num.length();
+        for (int i = 0; i < n-1; i++) {
+            int max = arr[i];
+            int swap_ind = i;
+            for (int j = i+1; j < n; j++) {
+                if(arr[j] > max) {
+                    max = arr[j];
+                    swap_ind = j;
+                }
+            }
+
+            int temp = arr[i];
+            arr[i] = arr[swap_ind];
+            arr[swap_ind] = temp;
+        }
+
+        for (int i = 0; i < n; i++) {
             System.out.print(arr[i]);
         }
     }
