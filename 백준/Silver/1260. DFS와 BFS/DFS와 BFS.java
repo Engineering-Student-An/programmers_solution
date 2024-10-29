@@ -1,70 +1,78 @@
-import java.util.LinkedList;
-import java.util.PriorityQueue;
-import java.util.Queue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
 
 public class Main {
+    static PriorityQueue<Integer>[] adjacentList1;
+    static PriorityQueue<Integer>[] adjacentList2;
+    static StringBuilder sb;
+    public static void main(String[] args) throws IOException {
 
-    public static void main(String[] args) throws Exception {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        Scanner scanner = new Scanner(System.in);
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int v = Integer.parseInt(st.nextToken());
 
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
-        int v = scanner.nextInt();
-
-        PriorityQueue<Integer>[] adj = new PriorityQueue[n+1];
-        PriorityQueue<Integer>[] adj2 = new PriorityQueue[n+1];
-        for (int i = 0; i <= n; i++) {
-            adj[i] = new PriorityQueue<Integer>();
-            adj2[i] = new PriorityQueue<Integer>();
+        adjacentList1 = new PriorityQueue[n+1];
+        adjacentList2 = new PriorityQueue[n+1];
+        for (int i = 1; i <= n; i++) {
+            adjacentList1[i] = new PriorityQueue<>();
+            adjacentList2[i] = new PriorityQueue<>();
         }
 
         for (int i = 0; i < m; i++) {
-            int start = scanner.nextInt();
-            int end = scanner.nextInt();
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
 
-            adj[start].add(end);
-            adj2[start].add(end);
-            adj[end].add(start);
-            adj2[end].add(start);
+            adjacentList1[a].add(b);
+            adjacentList1[b].add(a);
+            adjacentList2[a].add(b);
+            adjacentList2[b].add(a);
         }
+        sb = new StringBuilder();
 
-        boolean[] dfs_chk = new boolean[n + 1];
-        boolean[] bfs_chk = new boolean[n + 1];
+        boolean[] check = new boolean[n+1];
+        dfs(v, check);
+        sb.append("\n");
 
-        // dfs
-        dfs(adj, v, dfs_chk);
+        check = new boolean[n+1];
+        bfs(v, check);
 
-        System.out.println();
-
-        // bfs
-        bfs(adj2, v, bfs_chk);
+        System.out.print(sb);
     }
 
-    private static void bfs(PriorityQueue<Integer>[] adj, int v, boolean[] bfsChk) {
+    private static void bfs(int v, boolean[] check) {
         Queue<Integer> queue = new LinkedList<>();
         queue.add(v);
-        bfsChk[v] = true;
-        while(!queue.isEmpty()){
-            v = queue.poll();
-            System.out.print(v + " ");
-            while(!adj[v].isEmpty()){
-                int a = adj[v].poll();
-                if(!bfsChk[a]){
-                    queue.add(a);
-                    bfsChk[a] = true;
+        check[v] = true;
+
+        while(!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            sb.append(poll).append(" ");
+
+            while(!adjacentList2[poll].isEmpty()) {
+                Integer integer = adjacentList2[poll].poll();
+                if(!check[integer]) {
+                    queue.add(integer);
+                    check[integer] = true;
                 }
             }
         }
     }
 
-    private static void dfs(PriorityQueue<Integer>[] adj, int v, boolean[] dfsChk) {
-        System.out.print(v + " ");
-        dfsChk[v] = true;
-        while(!adj[v].isEmpty()){
-            int a = adj[v].poll();
-            if(!dfsChk[a]) dfs(adj, a, dfsChk);
+    private static void dfs(int v, boolean[] check) {
+        sb.append(v).append(" ");
+        check[v] = true;
+
+        while(!adjacentList1[v].isEmpty()) {
+            Integer poll = adjacentList1[v].poll();
+            if(!check[poll]) {
+                dfs(poll, check);
+            }
         }
     }
 
