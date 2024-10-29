@@ -1,51 +1,50 @@
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Stack;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
 
-        boolean[] visit = new boolean[n+1];
-
-        ArrayList<Integer>[] arr = new ArrayList[n+1];
-
-        for (int i = 0; i < n + 1; i++) {
-            arr[i] = new ArrayList<>();
-        }
-
+        boolean[][] adjacentList = new boolean[n+1][n+1];
         for (int i = 0; i < m; i++) {
-            int st = scanner.nextInt();
-            int end = scanner.nextInt();
-            arr[st].add(end);
-            arr[end].add(st);
+            st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+
+            adjacentList[u][v] = true;
+            adjacentList[v][u] = true;
         }
 
-        int count = 0;
-        for (int i = 1; i < n+1; i++) {
-            if(!visit[i]) {
-                count ++;
-                Queue<Integer> queue = new LinkedList<>(arr[i]);
-                visit[i] = true;
+        boolean[] visited = new boolean[n+1];
+        int result = 0;
+        for (int i = 1; i <= n; i++) {
+            Stack<Integer> stack = new Stack<>();
 
-                while(!queue.isEmpty()) {
-                    int v = queue.poll();
-                    if(!visit[v]){
-                        visit[v] = true;
-                        queue.addAll(arr[v]);
+            if(!visited[i]) {
+                stack.add(i);
+                result ++;
+            }
+            while(!stack.isEmpty()) {
+                Integer pop = stack.pop();
+                visited[pop] = true;
+
+                for (int j = 1; j <= n; j++) {
+                    if(adjacentList[pop][j] && !visited[j]) {
+                        stack.add(j);
                     }
-
                 }
+
             }
         }
 
-        System.out.println(count);
+        System.out.println(result);
     }
-
 }
-
