@@ -6,23 +6,48 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         String line = scanner.next();
-        String[] temp = line.split("-");
+        boolean[] plus = new boolean[line.length()];
 
-        int ans = 0;
-
-        for (int i = 0; i < temp.length; i++) {
-            String[] one = temp[i].split("\\+");
-
-            int t = 0;
-            for (String string : one) {
-                t += Integer.parseInt(string);
-            }
-
-            if(i == 0) ans += t;
-            else ans -= t;
+        if(!line.startsWith("-")) {
+            line = "+" + line;
+            plus[0] = true;
+        } else {
+            plus[0] = false;
         }
 
-        System.out.println(ans);
+        int num = 0;
+        int index = 0;
+        int[] nums = new int[line.length()];
+        for (int i = 1; i < line.length(); i++) {
 
+            if(line.charAt(i) == '+' || line.charAt(i) == '-') {
+                nums[index] = num;
+                plus[++index] = line.charAt(i) == '+';
+                num = 0;
+            } else {
+                num = num*10 + Integer.parseInt(String.valueOf(line.charAt(i)));
+            }
+        }
+        nums[index] = num;
+
+        int sum = 0;
+        int i = 0;
+        while(i<=index) {
+            if(plus[i]) {
+                sum += nums[i];
+                i++;
+            } else {
+                int partSum = 0;
+                while(true) {
+
+                    partSum += nums[i];
+                    i++;
+                    if(i > index || !plus[i]) break;
+                }
+                sum -= partSum;
+            }
+        }
+
+        System.out.println(sum);
     }
 }
