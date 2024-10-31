@@ -7,23 +7,22 @@ public class Main {
 
         int n = scanner.nextInt();
         int k = scanner.nextInt();
+
         int[] arr = new int[n];
 
-        for (int i = n-1; i >= 0 ; i--) {
+        for (int i = 0; i < n; i++) {
             arr[i] = scanner.nextInt();
         }
 
-        int ans = 0;
-        for (int i = 0; i < n; i++) {
-            if(k == 0) break;
-            if(arr[i] <= k) {
-                ans += k/arr[i];
-                k %= arr[i];
-            }
+        int count = 0;
 
+        for (int i = n-1; i >= 0; i--) {
+
+            count += k/arr[i];
+
+            k%=arr[i];
         }
 
-        System.out.println(ans);
-
+        System.out.println(count);
     }
 }
