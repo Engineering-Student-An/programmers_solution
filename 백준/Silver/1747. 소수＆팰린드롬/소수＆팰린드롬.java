@@ -19,20 +19,18 @@ public class Main {
     }
 
     private static boolean isPrime(int n) {
-        if (n < 2) return false; // 2보다 작은 수는 소수가 아님
-        if (n == 2) return true; // 2는 소수
-
-        if (n % 2 == 0) return false; // 2 이외의 짝수는 소수가 아님
+        if(n == 1) return false;
 
         int sqrt = (int) Math.sqrt(n);
-        for (int i = 3; i <= sqrt; i += 2) { // 홀수만 검사
-            if (n % i == 0) {
+
+        for (int i = 2; i <= sqrt; i++) {
+            if(n % i == 0) {
                 return false;
             }
         }
+
         return true;
     }
-
 
     private static boolean isPalindrome(int n) {
 
