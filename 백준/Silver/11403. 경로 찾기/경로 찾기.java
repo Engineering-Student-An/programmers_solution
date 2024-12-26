@@ -1,54 +1,42 @@
-import java.util.LinkedList;
-import java.util.Queue;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
+    public static void main(String[] args) throws IOException {
 
-    static int[][] adjacencyMatrix;
-    static int n;
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-    public static void main(String[] args) {
+        int n = Integer.parseInt(st.nextToken());
 
-        Scanner scanner = new Scanner(System.in);
-
-        n = scanner.nextInt();
-
-        adjacencyMatrix = new int[n][n];
+        int[][] arr = new int[n][n];
 
         for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < n; j++) {
-                adjacencyMatrix[i][j] = scanner.nextInt();
+                arr[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < n; i++) {
-            boolean[] visit = new boolean[n];
-            bfs(i, visit);
-
-            for (int j = 0; j < n; j++) {
-                sb.append( (visit[j]) ? 1 : 0).append(" ");
-            }
-            sb.append("\n");
-        }
-
-        System.out.print(sb);
-    }
-
-    public static void bfs(int v, boolean[] visit) {
-
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(v);
-
-        while (!queue.isEmpty()) {
-
-            Integer poll = queue.poll();
-            for (int i = 0; i < n; i++) {
-                if(adjacencyMatrix[poll][i] == 1 && !visit[i]) {
-                    queue.add(i);
-                    visit[i] = true;
+        for (int k = 0; k < n; k++) {
+            for (int start = 0; start < n; start++) {
+                for (int end = 0; end < n; end++) {
+                    if(arr[start][end] == 0) {
+                        if(arr[start][k] != 0 && arr[k][end] != 0) {
+                            arr[start][end] = 1;
+                        }
+                    }
                 }
             }
+        }
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                System.out.print(arr[i][j] + " ");
+            }
+            System.out.println();
         }
     }
 }
