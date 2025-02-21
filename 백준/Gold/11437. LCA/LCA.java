@@ -19,7 +19,7 @@ public class Main {
         n = Integer.parseInt(br.readLine());
 
         adjacencyList = new ArrayList[n+1];
-        for (int i = 0; i <= n; i++) {
+        for (int i = 0; i < n + 1; i++) {
             adjacencyList[i] = new ArrayList<>();
         }
 
@@ -35,28 +35,22 @@ public class Main {
 
         firstParent = new int[n+1];
         depthList = new int[n+1];
-        Arrays.fill(depthList, -1); // 깊이 리스트 초기화
-        depthList[1] = 0; // 루트 노드의 깊이는 0
         int level = depthOfTree();
 
         k = 0;
-        while(level >= (1 << k)) { // 2^k로 깊이 계산
-            k++;
+        while(level >= Math.pow(2, k)) {
+            k ++;
         }
         k--;
 
         parent = new int[k+1][n+1];
 
-        // 부모 배열 초기화
-        for (int i = 1; i <= n; i++) {
+        for (int i = 1; i < n + 1; i++) {
             parent[0][i] = firstParent[i];
         }
-
         for (int i = 1; i <= k; i++) {
-            for (int j = 1; j <= n; j++) {
-                if (parent[i-1][j] != 0) {
-                    parent[i][j] = parent[i-1][parent[i-1][j]];
-                }
+            for (int j = 0; j < n + 1; j++) {
+                parent[i][j] = parent[i-1][parent[i-1][j]];
             }
         }
 
@@ -74,21 +68,24 @@ public class Main {
     }
 
     static int lca(int a, int b) {
-        if (depthList[a] < depthList[b]) {
+
+        int depthDifference = depthList[a] - depthList[b];
+        if(depthDifference > 0) {
             int temp = a;
             a = b;
             b = temp;
         }
+        depthDifference = Math.abs(depthDifference);
 
         // 깊이 맞추기
-        int depthDifference = depthList[a] - depthList[b];
         for (int i = k; i >= 0; i--) {
-            if ((depthDifference & (1 << i)) != 0) {
-                a = parent[i][a];
+            if(depthDifference >= Math.pow(2, i) && depthList[a] <= depthList[parent[i][b]]) {
+                b = parent[i][b];
+                depthDifference = Math.abs(depthList[a] - depthList[b]);
             }
         }
-
-        if (a == b) {
+        
+        if(a == b) {
             return a;
         }
 
@@ -103,7 +100,9 @@ public class Main {
     }
 
     static int depthOfTree() {
+
         boolean[] visit = new boolean[n+1];
+
         visit[1] = true;
         Queue<Node> queue = new LinkedList<>();
         queue.add(new Node(1, 0));
