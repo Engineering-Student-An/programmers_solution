@@ -1,37 +1,39 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
-
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int n = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(br.readLine());
 
         int[] arr = new int[n];
-
+        StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextInt();
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(arr);
+        int left = 0;
+        int right = n-1;
+        long count = 0;
+        while(left < right) {
+            long sum = arr[left] + arr[right];
 
-        int small = 0;
-        int large = n-1;
-        int ans = 0;
-        while(small < large) {
-            int now = arr[small] + arr[large];
-            if(now == m) {
-                small ++;
-                large --;
-                ans++;
-            } else if(now > m) {
-                large --;
+            if(sum == m) {
+                count ++;
+                right --;
+            } else if(sum > m) {
+                right --;
             } else {
-                small ++;
+                left ++;
             }
         }
-        System.out.println(ans);
+
+        System.out.println(count);
     }
 }
