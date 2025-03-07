@@ -2,95 +2,66 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static int ans = 0;
-    public static int[] arr;
-    public static int[] chk;
+    static String line;
+    static int[] must;
+    static int[] part;
+    static int result = 0;
 
     public static void main(String[] args) {
 
-       Scanner scanner = new Scanner(System.in);
+        Scanner scanner = new Scanner(System.in);
 
-       int n = scanner.nextInt();
-       int p = scanner.nextInt();
+        int n = scanner.nextInt();
+        int p = scanner.nextInt();
 
-       String word = scanner.next();
+        line = scanner.next();
 
-        arr = new int[4];
+        must = new int[4];
         for (int i = 0; i < 4; i++) {
-            arr[i] = scanner.nextInt();
+            must[i] = scanner.nextInt();
         }
 
-        int start = 0;
-        int end = p-1;
-
-        chk = new int[4];
-        for (int i = start; i <= end; i++) {
-            char now = word.charAt(i);
-            if(now == 'A') {
-                chk[0] ++;
-            } else if(now == 'C') {
-                chk[1] ++;
-            } else if(now == 'G') {
-                chk[2] ++;
-            } else if(now == 'T') {
-                chk[3]++;
-            }
+        part = new int[4];
+        for (int i = 0; i < p; i++) {
+            part[check(i)] ++;
         }
 
-        if(!isCheck(chk, arr)) ans ++;
+        count();
 
+        int left = 0;
+        int right = p-1;
+        while(right < n-1) {
 
-        start ++;
-        end ++;
-        while (end < n) {
+            part[check(left)] --;
+            left ++;
+            right ++;
+            part[check(right)] ++;
 
-            delete(word, start-1);
-            add(word, end);
-
-            boolean check = isCheck(chk, arr);
-            if(!check) {
-                ans ++;
-            }
-            start ++;
-            end ++;
+            count();
         }
-        System.out.println(ans);
+
+        System.out.println(result);
     }
 
-    private static void add(String word, int end) {
-        char now = word.charAt(end);
-        if(now == 'A') {
-            chk[0] ++;
-        } else if(now == 'C') {
-            chk[1] ++;
-        } else if(now == 'G') {
-            chk[2] ++;
-        } else if(now == 'T') {
-            chk[3] ++;
+    static int check(int i) {
+        char ch = line.charAt(i);
+
+        if(ch == 'A') {
+            return 0;
+        } else if(ch == 'C') {
+            return 1;
+        } else if(ch == 'G') {
+            return 2;
+        } else {
+            return 3;
         }
     }
 
-    private static void delete(String word, int start) {
-        char now = word.charAt(start);
-        if(now == 'A') {
-            chk[0] --;
-        } else if(now == 'C') {
-            chk[1] --;
-        } else if(now == 'G') {
-            chk[2] --;
-        } else if(now == 'T') {
-            chk[3] --;
-        }
-    }
-
-    private static boolean isCheck(int[] chk, int[] arr) {
-        boolean check = false;
+    static void count() {
         for (int i = 0; i < 4; i++) {
-            if(chk[i] < arr[i]) {
-                check = true;
-                break;
-            }
+            if(part[i] < must[i]) return;
         }
-        return check;
+
+        result ++;
     }
 }
