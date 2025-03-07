@@ -1,41 +1,60 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = scanner.nextInt();
-        int[] arr = new int[n];
+        int n = Integer.parseInt(br.readLine());
+        long[] arr = new long[n];
+        StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextInt();
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
         Arrays.sort(arr);
         int result = 0;
+        boolean checkBefore = false;
+        for (int i = 0; i < n; i++) {
 
-        for (int i = 0; i < n; i ++) {
-            int start_idx = 0;
-            int end_idx = n-1;
-            while(start_idx < end_idx) {
-                int sum = arr[start_idx] + arr[end_idx];
-                if (sum == arr[i]) {
-                    if(start_idx != i && end_idx != i) {
-                        result ++;
+            if(i > 0 && arr[i] == arr[i-1] && checkBefore) {
+                result ++;
+            } else {
+
+                long ans = arr[i];
+
+                int left = 0;
+                int right = n - 1;
+
+                boolean checkNow = false;
+                while (left < right) {
+                    long sum = arr[left] + arr[right];
+
+                    if (left == i) {
+                        left++;
+                        continue;
+                    }
+                    else if (right == i) {
+                        right--;
+                        continue;
+                    }
+
+                    if (sum == ans) {
+                        result++;
+                        checkNow = true;
                         break;
-                    }
-                    else if(start_idx == i) {
-                        start_idx ++;
+                    } else if (sum > ans) {
+                        right--;
                     } else {
-                        end_idx --;
+                        left++;
                     }
-
-                } else if(sum > arr[i]) {
-                    end_idx --;
-                } else {
-                    start_idx ++;
                 }
+
+                checkBefore = checkNow;
             }
         }
 
