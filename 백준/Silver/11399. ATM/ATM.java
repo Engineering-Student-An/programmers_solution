@@ -1,36 +1,28 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = scanner.nextInt();
-
+        int n = Integer.parseInt(br.readLine());
         int[] arr = new int[n];
+
+        StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            arr[i] = scanner.nextInt();
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        for (int i = 1; i < n; i++) {
-            int now = arr[i];
-            int ind = i;
-            for (int j = i-1; j >= 0; j--) {
-                if(arr[i] < arr[j]) {
-                    ind = j;
-                } else break;
-            }
-            for (int j = i-1; j >= ind; j--) {
-                arr[j+1] = arr[j];
-            }
-            arr[ind] = now;
-        }
-
-        int sum = 0;
+        Arrays.sort(arr);
+        long result = 0;
         for (int i = 0; i < n; i++) {
-            sum += (n-i) * arr[i];
+            result += (long) (n - i) * arr[i];
         }
 
-        System.out.println(sum);
+        System.out.println(result);
     }
 }
