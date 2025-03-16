@@ -5,77 +5,63 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static Long count = 0L;
-    static Data[] temp;
+    static int n;
+    static int[] arr;
+    static int[] temp;
+    static long result = 0;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int n = Integer.parseInt(br.readLine());
+        n = Integer.parseInt(br.readLine());
 
-        Data[] arr = new Data[n];
-        temp = new Data[n];
+        arr = new int[n];
+        temp = new int[n];
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            arr[i] = new Data(Integer.parseInt(st.nextToken()), i);
+            arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        mergeSort(arr, 0, n-1);
+        mergeSort(0, n-1);
 
-        System.out.println(count);
+        System.out.println(result);
     }
 
-    private static void mergeSort(Data[] arr, int start, int end) {
+    static void mergeSort(int start, int end) {
 
         if(start >= end) return;
 
-        int middle = (start+end)/2;
+        int middle = (start + end) / 2;
+        mergeSort(start, middle);
+        mergeSort(middle + 1, end);
 
-        mergeSort(arr, start, middle);
-        mergeSort(arr, middle + 1, end);
+        int index = start;
+        int left = start;
+        int right = middle + 1;
+        while(left <= middle && right <= end) {
+            int l = arr[left];
+            int r = arr[right];
 
-        for (int i = start; i <= end; i++) {
-            temp[i] = arr[i];
-        }
-
-        int k = start;
-        int pl = start;
-        int pr = middle+1;
-        while(pl <= middle && pr <= end) {
-            if(temp[pl].value <= temp[pr].value) {
-                arr[k] = temp[pl ++];
-                arr[k].index = k;
-                k++;
+            if(l <= r) {
+                temp[index ++] = l;
+                left ++;
             } else {
-                arr[k] = temp[pr ++];
-                count += arr[k].index-k;
-                arr[k].index = k;
-                k++;
+                temp[index ++] = r;
+                result += (right - index + 1);
+                right ++;
             }
         }
 
-        while(pl <= middle) {
-            arr[k] = temp[pl ++];
-            arr[k].index = k;
-            k++;
+        while(left <= middle) {
+            temp[index ++] = arr[left ++];
+        }
+        while(right <= end) {
+            temp[index ++] = arr[right ++];
         }
 
-        while(pr <= end) {
-            arr[k] = temp[pr ++];
-            arr[k].index = k;
-            k++;
-        }
-
-
-    }
-
-    public static class Data {
-        int value;
-        int index;
-
-        public Data(int value, int index) {
-            this.value = value;
-            this.index = index;
+        for (int i = start; i <= end; i++) {
+            arr[i] = temp[i];
         }
     }
 }
