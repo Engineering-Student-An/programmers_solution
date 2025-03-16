@@ -1,10 +1,13 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Stack;
-import java.util.StringTokenizer;
+import java.util.*;
 
 public class Main {
+
+    static List<Integer>[] adjacencyList;
+    static boolean[] visit;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -13,38 +16,48 @@ public class Main {
         int n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
 
-        boolean[][] adjacentList = new boolean[n+1][n+1];
+        adjacencyList = new List[n+1];
+        for (int i = 1; i <= n; i++) {
+            adjacencyList[i] = new ArrayList<>();
+        }
+
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            int u = Integer.parseInt(st.nextToken());
-            int v = Integer.parseInt(st.nextToken());
+            int start = Integer.parseInt(st.nextToken());
+            int end = Integer.parseInt(st.nextToken());
 
-            adjacentList[u][v] = true;
-            adjacentList[v][u] = true;
+            adjacencyList[start].add(end);
+            adjacencyList[end].add(start);
         }
 
-        boolean[] visited = new boolean[n+1];
-        int result = 0;
+        visit = new boolean[n+1];
+
+        int count = 0;
         for (int i = 1; i <= n; i++) {
-            Stack<Integer> stack = new Stack<>();
-
-            if(!visited[i]) {
-                stack.add(i);
-                result ++;
-            }
-            while(!stack.isEmpty()) {
-                Integer pop = stack.pop();
-                visited[pop] = true;
-
-                for (int j = 1; j <= n; j++) {
-                    if(adjacentList[pop][j] && !visited[j]) {
-                        stack.add(j);
-                    }
-                }
-
+            if(!visit[i]) {
+                bfs(i);
+                count ++;
             }
         }
 
-        System.out.println(result);
+        System.out.println(count);
+    }
+
+    static void bfs(int i) {
+
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(i);
+        visit[i] = true;
+
+        while(!queue.isEmpty()) {
+            Integer poll = queue.poll();
+
+            for (Integer integer : adjacencyList[poll]) {
+                if(!visit[integer]) {
+                    visit[integer] = true;
+                    queue.add(integer);
+                }
+            }
+        }
     }
 }
