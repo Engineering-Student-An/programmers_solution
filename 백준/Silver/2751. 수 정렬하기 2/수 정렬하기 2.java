@@ -1,62 +1,68 @@
-import java.io.*;
-import java.util.StringTokenizer;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static int[] temp;
+
+    static int n;
+    static int[] arr;
+    static int[] temp;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(br.readLine());
+
+        arr = new int[n];
         temp = new int[n];
-        int[] arr = new int[n];
         for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            arr[i] = Integer.parseInt(st.nextToken());
+            arr[i] = Integer.parseInt(br.readLine());
         }
 
-        mergeSort(arr, 0, n-1);
+        mergeSort(0, n-1);
 
-        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        StringBuilder sb = new StringBuilder();
         for (int i : arr) {
-            bw.write(i + "\n");
+            sb.append(i).append("\n");
         }
 
-        bw.flush();
-        bw.close();
+        System.out.print(sb);
     }
 
-    private static void mergeSort(int[] arr, int start, int end) {
+    static void mergeSort(int start, int end) {
 
         if(start >= end) return;
 
         int middle = (start + end) / 2;
+        mergeSort(start, middle);
+        mergeSort(middle + 1, end);
 
-        mergeSort(arr, start, middle);
-        mergeSort(arr, middle+1, end);
+        int index = start;
+        int left = start;
+        int right = middle + 1;
+        while(left <= middle && right <= end) {
+            int l = arr[left];
+            int r = arr[right];
 
-        for (int i = start; i <= end; i++) {
-            temp[i] = arr[i];
-        }
-
-        int k = start;
-        int pl = start;
-        int pr = middle+1;
-
-        while(pl <= middle && pr <= end){
-            if(temp[pl] < temp[pr]) {
-                arr[k++] = temp[pl++];
+            if(l < r) {
+                temp[index ++] = l;
+                left ++;
             } else {
-                arr[k++] = temp[pr++];
+                temp[index ++] = r;
+                right ++;
             }
         }
 
-        while(pl <= middle) {
-            arr[k++] = temp[pl++];
+        while(left <= middle) {
+            temp[index ++] = arr[left ++];
         }
-        while(pr <= end) {
-            arr[k++] = temp[pr++];
+        while(right <= end) {
+            temp[index ++] = arr[right ++];
+        }
+
+        for (int i = start; i <= end; i++) {
+            arr[i] = temp[i];
         }
     }
 }
