@@ -6,49 +6,70 @@ import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) throws IOException {
 
+    static int n, m;
+    static boolean[][] arr;
+    static int[][] result;
+    static int[] nextRow = {0, 1, 0, -1};
+    static int[] nextCol = {1, 0, -1, 0};
+
+    public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
 
-        boolean[][] arr = new boolean[n+2][m+2];
+        arr = new boolean[n][m];
+        result = new int[n][m];
 
-        for (int i = 1; i <= n; i++) {
-            st = new StringTokenizer(br.readLine());
-            String line = st.nextToken();
-            for (int j = 1; j <= m; j++) {
-                arr[i][j] = (line.charAt(j - 1) == '1');
+        for (int i = 0; i < n; i++) {
+            String line = br.readLine();
+            for (int j = 0; j < m; j++) {
+                arr[i][j] = (line.charAt(j) == '1');
             }
         }
 
-        int[][] check = new int[n+1][m+1];
-        Queue<int[]> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                result[i][j] = Integer.MAX_VALUE;
+            }
+        }
 
-        int[] dr = {0, 1, 0, -1};
-        int[] dc = {1, 0, -1, 0};
+        bfs(0, 0);
 
-        queue.add(new int[]{1, 1, 1});
-        check[1][1] = 1;
-        while(!queue.isEmpty()) {
-            int[] poll = queue.poll();
+        System.out.println(result[n-1][m-1]);
+    }
 
-            int r = poll[0];
-            int c = poll[1];
+    static void bfs(int i, int j) {
 
-            for (int i = 0; i < 4; i++) {
-                int nextRow = r+dr[i];
-                int nextCol = c+dc[i];
-                if(arr[nextRow][nextCol] && check[nextRow][nextCol] == 0) {
-                    queue.add(new int[]{nextRow, nextCol, poll[2]+1});
-                    check[nextRow][nextCol] = poll[2]+1;
+        Queue<Info> queue = new LinkedList<>();
+        result[i][j] = 1;
+        queue.add(new Info(i, j));
+
+        while (!queue.isEmpty()) {
+            Info poll = queue.poll();
+
+            for (int k = 0; k < 4; k++) {
+                int ni = poll.i + nextRow[k];
+                int nj = poll.j + nextCol[k];
+
+                if(ni >= 0 && ni < n && nj >= 0 && nj < m && arr[ni][nj] && result[ni][nj] == Integer.MAX_VALUE) {
+                    result[ni][nj] = result[poll.i][poll.j] + 1;
+                    queue.add(new Info(ni, nj));
                 }
             }
         }
+    }
 
-        System.out.println(check[n][m]);
+    static class Info {
+        int i;
+        int j;
+
+        public Info(int i, int j) {
+            this.i = i;
+            this.j = j;
+        }
     }
 }
