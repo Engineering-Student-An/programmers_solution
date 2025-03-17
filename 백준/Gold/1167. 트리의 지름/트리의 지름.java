@@ -4,80 +4,82 @@ import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
+
+    static List<Info>[] adjacencyList;
     static int n;
-    static ArrayList<Data>[] adjacentList;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(br.readLine());
 
-         adjacentList = new ArrayList[n+1];
-
+        adjacencyList = new ArrayList[n+1];
         for (int i = 1; i <= n; i++) {
-            adjacentList[i] = new ArrayList<>();
+            adjacencyList[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            int v = Integer.parseInt(st.nextToken());
-            while(true) {
-                String t = st.nextToken();
-                if(t.equals("-1")) break;
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int start = Integer.parseInt(st.nextToken());
 
-                int node = Integer.parseInt(t);
-                int value = Integer.parseInt(st.nextToken());
-                adjacentList[v].add(new Data(node, value));
+            while(true) {
+                int end = Integer.parseInt(st.nextToken());
+                if(end == -1) break;
+                long value = Long.parseLong(st.nextToken());
+
+                adjacencyList[start].add(new Info(end, value));
             }
         }
 
-        int[] distance = new int[n+1];
-
+        long[] distance = new long[n+1];
         bfs(1, distance);
 
-        int max_ind = 0;
-        int max = -1;
-        for (int i=1; i<=n; i++) {
+        long max = distance[1];
+        int startIndex = 1;
+        for (int i = 2; i <= n; i++) {
             if(max < distance[i]) {
+                startIndex = i;
                 max = distance[i];
-                max_ind = i;
             }
         }
 
-        distance = new int[n+1];
-        bfs(max_ind, distance);
+        distance = new long[n+1];
+        bfs(startIndex, distance);
 
-        Arrays.sort(distance);
-        System.out.println(distance[n]);
+        max = distance[1];
+        for (int i = 2; i <= n; i++) {
+            max = Math.max(max, distance[i]);
+        }
+
+        System.out.println(max);
     }
 
-    private static void bfs(int v, int[] distance) {
-        boolean[] check = new boolean[n + 1];
+    static void bfs(int num, long[] distance) {
 
-        Queue<Integer> queue = new LinkedList<>();
+        boolean[] visit = new boolean[n+1];
+        visit[num] = true;
 
-        queue.add(v);
-        check[v] = true;
+        Queue<Info> queue = new LinkedList<>();
+        queue.add(new Info(num, 0));
 
-        while(!queue.isEmpty()) {
-            Integer poll = queue.poll();
-
-            for (Data data : adjacentList[poll]) {
-                if(!check[data.node]) {
-                    queue.add(data.node);
-                    check[data.node] = true;
-                    distance[data.node] = distance[poll] + data.value;
+        while (!queue.isEmpty()) {
+            Info poll = queue.poll();
+            for (Info info : adjacencyList[poll.node]) {
+                if(!visit[info.node]) {
+                    visit[info.node] = true;
+                    distance[info.node] = distance[poll.node] + info.value;
+                    queue.add(info);
                 }
             }
         }
     }
 
-    static class Data {
+    static class Info {
         int node;
-        int value;
+        long value;
 
-        public Data(int node, int value) {
+        public Info(int node, long value) {
             this.node = node;
             this.value = value;
         }
