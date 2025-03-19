@@ -1,53 +1,69 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        String line = scanner.next();
-        boolean[] plus = new boolean[line.length()];
+        String line = br.readLine();
 
-        if(!line.startsWith("-")) {
-            line = "+" + line;
-            plus[0] = true;
-        } else {
-            plus[0] = false;
+
+        int n = 0;
+        for (int i = 0; i < line.length(); i++) {
+            if(line.charAt(i) == '+' || line.charAt(i) == '-') n ++;
         }
 
-        int num = 0;
+        int[] arr = new int[++n];
+
+        int num = line.charAt(0) - '0';
         int index = 0;
-        int[] nums = new int[line.length()];
+        boolean isPlus = true;
         for (int i = 1; i < line.length(); i++) {
 
-            if(line.charAt(i) == '+' || line.charAt(i) == '-') {
-                nums[index] = num;
-                plus[++index] = line.charAt(i) == '+';
-                num = 0;
-            } else {
-                num = num*10 + Integer.parseInt(String.valueOf(line.charAt(i)));
-            }
-        }
-        nums[index] = num;
-
-        int sum = 0;
-        int i = 0;
-        while(i<=index) {
-            if(plus[i]) {
-                sum += nums[i];
-                i++;
-            } else {
-                int partSum = 0;
-                while(true) {
-
-                    partSum += nums[i];
-                    i++;
-                    if(i > index || !plus[i]) break;
+            char now = line.charAt(i);
+            if(now != '+' && now != '-') {
+                num *= 10;
+                if(isPlus) {
+                    num += (now -'0');
+                } else {
+                    num -= (now - '0');
                 }
-                sum -= partSum;
+                if(i == line.length() - 1){
+                    arr[index] = num;
+                    break;
+                }
+            } else {
+                arr[index ++] = num;
+                num = (now == '+') ? line.charAt(++i) - '0' : (line.charAt(++i) - '0') * -1;
+                isPlus = (now == '+');
+
+                if(i == line.length() - 1) {
+                    arr[index] = num;
+                    break;
+                }
+            }
+        }
+        if(line.length() == 1) {
+            arr[index] = num;
+        }
+
+        index = 0;
+        long result = 0;
+        while(index < n) {
+            if(arr[index] >= 0) {
+                result += arr[index ++];
+            } else if(arr[index] < 0) {
+                long sum = arr[index] * -1;
+                index ++;
+                while(index < n && arr[index] >= 0) {
+                    sum += arr[index ++];
+                }
+                result -= sum;
             }
         }
 
-        System.out.println(sum);
+        System.out.println(result);
     }
 }
