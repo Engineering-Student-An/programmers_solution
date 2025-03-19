@@ -1,58 +1,68 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Comparator;
 import java.util.PriorityQueue;
-import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        PriorityQueue<Integer> minusQueue = new PriorityQueue<>();
-        PriorityQueue<Integer> plusQueue = new PriorityQueue<>(new QComparator());
+        int n = Integer.parseInt(br.readLine());
 
-        int zero = 0;
+        PriorityQueue<Long> plus = new PriorityQueue<>(new PlusComparator());
+        PriorityQueue<Long> minus = new PriorityQueue<>();
+        int zero =  0;
         for (int i = 0; i < n; i++) {
-            int num = scanner.nextInt();
-            if(num < 0) {
-                minusQueue.add(num);
-            } else if(num > 0) {
-                plusQueue.add(num);
+            Long num = Long.parseLong(br.readLine());
+
+            if(num > 0) plus.add(num);
+            else if(num == 0) zero ++;
+            else minus.add(num);
+        }
+
+        long result = 0;
+        while (!plus.isEmpty()) {
+            Long one = plus.poll();
+            if (plus.isEmpty()) {
+                result += one;
+                break;
+            } else if(one == 1) {
+                result += one;
+                continue;
+            }
+
+            Long two = plus.poll();
+            if(two == 1) {
+                result += one + two;
             } else {
-                zero++;
+                result += (one * two);
             }
         }
 
-        long sum = 0;
+        while (!minus.isEmpty()) {
+            Long one = minus.poll();
+            if (minus.isEmpty()) {
+                if(zero > 0) {
+                    zero --;
+                } else {
+                    result += one;
+                }
+                break;
+            }
 
-        while(minusQueue.size() > 1) {
-            int a = minusQueue.poll();
-            int b = minusQueue.poll();
-            sum += a*b;
+            Long two = minus.poll();
+            result += (one * two);
         }
 
-        if(zero < 1 && minusQueue.size() == 1) {
-            sum += minusQueue.poll();
-        }
-
-        while(plusQueue.size() > 1) {
-            int a = plusQueue.poll();
-            int b = plusQueue.poll();
-            sum += Math.max(a*b, a+b);
-        }
-        if(plusQueue.size() == 1) {
-            sum += plusQueue.poll();
-        }
-
-        System.out.println(sum);
+        System.out.println(result);
     }
 
-    public static class QComparator implements Comparator<Integer> {
-
+    static class PlusComparator implements Comparator<Long> {
         @Override
-        public int compare(Integer o1, Integer o2) {
-
-            return o2-o1;
+        public int compare(Long o1, Long o2) {
+            return (o2 > o1) ? 1 : -1;
         }
     }
 }
