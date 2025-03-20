@@ -6,69 +6,77 @@ import java.util.*;
 public class Main {
 
     static ArrayList<Integer>[] adjacencyList;
-    static int[] result;
+    static boolean[] visit;
+    static int n;
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
 
         adjacencyList = new ArrayList[n+1];
-        for (int i = 0; i <= n; i++) {
+        for (int i = 1; i <= n; i++) {
             adjacencyList[i] = new ArrayList<>();
         }
 
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            
-            int start = Integer.parseInt(st.nextToken());
-            int end = Integer.parseInt(st.nextToken());
-            
-            adjacencyList[start].add(end);
-        }
+            int v = Integer.parseInt(st.nextToken());
+            int u = Integer.parseInt(st.nextToken());
 
-        result = new int[n+1];
-
-        for (int i = 1; i <= n; i++) {
-            bfs(n, i);
+            adjacencyList[u].add(v);
         }
 
         int max = -1;
-        StringBuilder sb = new StringBuilder();
+        PriorityQueue<Integer> queue = new PriorityQueue<>();
         for (int i = 1; i <= n; i++) {
-            if(max < result[i]) {
-                max = result[i];
-                sb = new StringBuilder();
-                sb.append(i).append(" ");
-            } else if(max == result[i]) {
-                sb.append(i).append(" ");
+            int result = bfs(i);
+            if(max == result) {
+                queue.add(i);
+            } else if(max < result) {
+                queue = new PriorityQueue<>();
+                queue.add(i);
+                max = result;
             }
+        }
+
+        StringBuilder sb = new StringBuilder();
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            sb.append(poll).append(" ");
         }
 
         System.out.print(sb);
     }
 
-    public static void bfs(int n, int v) {
-        
+    static int bfs(int start) {
+
+        visit = new boolean[n+1];
+        visit[start] = true;
         Queue<Integer> queue = new LinkedList<>();
-        boolean[] visit = new boolean[n+1];
-        
-        queue.add(v);
-        
-        while (!queue.isEmpty()) {
+        queue.add(start);
+
+        while(!queue.isEmpty()) {
             Integer poll = queue.poll();
-            visit[poll] = true;
 
             for (Integer i : adjacencyList[poll]) {
                 if(!visit[i]) {
                     visit[i] = true;
                     queue.add(i);
-                    result[i] ++;
                 }
             }
         }
+
+        int count = 0;
+        for (int i = 1; i <= n; i++) {
+            if(visit[i]) {
+                count++;
+            }
+        }
+
+        return count;
     }
 }
