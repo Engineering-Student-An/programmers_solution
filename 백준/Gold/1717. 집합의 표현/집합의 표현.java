@@ -4,59 +4,52 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static int[] arr;
-
+    
+    static int n;
+    static int[] parent;
+    
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         int m = Integer.parseInt(st.nextToken());
 
-        arr = new int[n+1];
+        parent = new int[n+1];
         for (int i = 0; i <= n; i++) {
-            arr[i] = i;
+            parent[i] = i;
         }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            int type = Integer.parseInt(st.nextToken());
+
+            int w = Integer.parseInt(st.nextToken());
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
-
-            if(type == 0) {
+            if(w == 0) {
                 union(a, b);
             } else {
-                sb.append(checkSame(a, b) ? "YES" : "NO").append("\n");
+                int findA = find(a);
+                int findB = find(b);
+                sb.append(findA == findB ? "YES" : "NO").append("\n");
             }
         }
 
         System.out.print(sb);
     }
 
-    public static void union(int a, int b) {
-
+    static void union(int a, int b) {
         a = find(a);
         b = find(b);
 
-        if(a != b) {
-            arr[b] = a;
-        }
+        if(a != b) parent[b] = a;
     }
 
-    public static boolean checkSame(int a, int b) {
+    static int find(int a) {
+        if(parent[a] == a) return a;
 
-        return (find(a) == find(b));
-    }
-
-    public static int find(int a) {
-
-        if(arr[a] == a) {
-            return a;
-        }
-        return arr[a] = find(arr[a]);
+        return parent[a] = find(parent[a]);
     }
 }
