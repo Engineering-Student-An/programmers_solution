@@ -1,84 +1,81 @@
-import java.util.ArrayList;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] arr;
+    static int[] parent;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
-        int p = scanner.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int know = scanner.nextInt();
-        ArrayList<Integer> knowList = new ArrayList<>();
-        for (int i = 0; i < know; i++) {
-            knowList.add(scanner.nextInt());
+        int n = Integer.parseInt(st.nextToken());
+        int p = Integer.parseInt(st.nextToken());
+
+        st = new StringTokenizer(br.readLine());
+        int k = Integer.parseInt(st.nextToken());
+
+        parent = new int[n+1];
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
         }
 
-        arr = new int[n+1];
-        for (int i = 0; i <= n; i++) {
-            arr[i] = i;
-        }
-        for (Integer integer : knowList) {
-            arr[integer] = 0;
+        int[] knowList = new int[k];
+        for (int i = 0; i < k; i++) {
+            knowList[i] = Integer.parseInt(st.nextToken());
+            parent[knowList[i]] = 0;
         }
 
-        ArrayList<Integer>[] partyList = new ArrayList[p];
+        int[][] partyList = new int[p][n];
         for (int i = 0; i < p; i++) {
-            partyList[i] = new ArrayList<>();
-
-            int people = scanner.nextInt();
-            for (int j = 0; j < people; j++) {
-                partyList[i].add(scanner.nextInt());
+            st = new StringTokenizer(br.readLine());
+            int peopleCount = Integer.parseInt(st.nextToken());
+            for (int j = 0; j < peopleCount; j++) {
+                partyList[i][j] = Integer.parseInt(st.nextToken());
             }
         }
 
         for (int i = 0; i < p; i++) {
-            for (Integer integer : partyList[i]) {
-                for (Integer integer1 : partyList[i]) {
-                    union(integer, integer1);
-                }
+            for (int j = 1; j < n; j++) {
+                if(partyList[i][j] == 0) break;
+
+                union(partyList[i][j-1], partyList[i][j]);
             }
         }
 
         int count = 0;
         for (int i = 0; i < p; i++) {
-            boolean isContain = false;
-            int current = partyList[i].get(0);
-            for (int j = 0; j < knowList.size(); j++) {
-                if(find(current).equals(find(knowList.get(j)))) {
-                    isContain = true;
+            boolean isPossible = true;
+            for (int j = 0; j < n; j++) {
+                if(partyList[i][j] == 0) break;
+
+                if(find(partyList[i][j]) == 0) {
+                    isPossible = false;
                     break;
                 }
             }
 
-            if(!isContain) count ++;
+            if(isPossible) count ++;
         }
 
         System.out.println(count);
     }
 
-    private static void union(Integer a, Integer b) {
-
+    static void union(int a, int b) {
         a = find(a);
         b = find(b);
 
-        if(!a.equals(b)) {
-            if(a < b) {
-                arr[b] = a;
-            } else {
-                arr[a] = b;
-            }
+        if(a!=b) {
+            parent[Math.max(a, b)]=Math.min(a, b);
         }
     }
 
-    private static Integer find(Integer a) {
+    static int find(int a) {
+        if(a == parent[a]) return a;
 
-        if(arr[a] == a) {
-            return a;
-        }
-        return arr[a] = find(arr[a]);
+        return parent[a] = find(parent[a]);
     }
 }
