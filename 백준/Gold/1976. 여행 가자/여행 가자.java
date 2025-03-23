@@ -1,65 +1,104 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 public class Main {
 
-    static int[] city;
-    public static void main(String[] args) {
+    static ArrayList<Integer>[] adjacencyList;
+    static boolean[] visit;
+    static int n, m;
+    static int[] travelList;
+    static int[] parent;
 
-        Scanner scanner = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
 
-        int n = scanner.nextInt();
-        int m = scanner.nextInt();
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int[][] adjMatrix = new int[n+1][n+1];
+        n = Integer.parseInt(br.readLine());
+        m = Integer.parseInt(br.readLine());
+
+        adjacencyList = new ArrayList[n+1];
         for (int i = 1; i <= n; i++) {
+            adjacencyList[i] = new ArrayList<>();
+        }
+
+        for (int i = 1; i <= n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
             for (int j = 1; j <= n; j++) {
-                adjMatrix[i][j] = scanner.nextInt();
-            }
-        }
-
-        city = new int[n+1];
-        for (int i = 1; i <= n; i++) {
-            city[i] = i;
-        }
-
-        int[] plan = new int[m];
-        for (int i = 0; i < m; i++) {
-            plan[i] = scanner.nextInt();
-        }
-
-        for (int i = 1; i <= n; i++) {
-            for (int j = 1; j <= n; j++) {
-                if(adjMatrix[i][j] == 1) {
-                    union(i, j);
+                int isPossible = Integer.parseInt(st.nextToken());
+                if(isPossible == 1) {
+                    adjacencyList[i].add(j);
                 }
             }
         }
 
-        int result = find(plan[0]);
-        boolean chk = true;
-        for (int i = 1; i < m; i++) {
-            if(result!=find(plan[i])) {
-                chk = false;
-                break;
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        travelList = new int[m];
+        for (int i = 0; i < m; i++) {
+            travelList[i] = Integer.parseInt(st.nextToken());
+        }
+
+        visit = new boolean[n+1];
+        parent = new int[n+1];
+
+
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
+        }
+
+        for (int i = 1; i <= n; i++) {
+            if(!visit[i]) {
+                bfs(i);
             }
         }
-        System.out.println((chk) ? "YES" : "NO");
+
+        for (int i = 1; i <= n; i++) {
+            find(i);
+        }
+
+        int plan = parent[travelList[0]];
+        boolean isPossible = true;
+        for (int i = 1; i < m; i++) {
+            if (parent[travelList[i]] != plan) isPossible = false;
+        }
+
+        System.out.println((isPossible) ? "YES" : "NO");
     }
 
-    public static void union(int i, int j) {
-        i = find(i);
-        j = find(j);
+    static void bfs(int num) {
 
-        if(i!=j) {
-            city[i] = j;
+        visit[num] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(num);
+
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+            for (Integer i : adjacencyList[poll]) {
+                if(!visit[i]) {
+                    queue.add(i);
+                    visit[i] = true;
+                    union(num, i);
+                }
+            }
         }
     }
 
-    private static int find(int i) {
-        if(i == city[i]) {
-            return i;
-        } else {
-            return city[i] = find(city[i]);
+    static void union(int a, int b) {
+        a = find(a);
+        b = find(b);
+
+        if(a!=b) {
+            parent[b] = a;
         }
+    }
+
+    static int find(int a) {
+        if(parent[a] == a) return a;
+
+        return parent[a] = find(parent[a]);
     }
 }
