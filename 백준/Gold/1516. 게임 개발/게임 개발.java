@@ -1,64 +1,72 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
 
-        Scanner scanner = new Scanner(System.in);
-        int n = scanner.nextInt();
+    static ArrayList<Integer>[] adjacencyList;
+    static int n;
+    static long[] result;
+    static long[] times;
+    static int[] inDegree;
 
-        int[] timeList = new int[n+1];
-        ArrayList<Integer>[] adjacencyList = new ArrayList[n+1];
-        int[] inDegree = new int[n+1];
+    public static void main(String[] args) throws IOException {
 
-        for (int i = 0; i <= n; i++) {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+
+        adjacencyList = new ArrayList[n+1];
+        for (int i = 1; i <= n; i++) {
             adjacencyList[i] = new ArrayList<>();
         }
-        
+
+        inDegree = new int[n+1];
+        times = new long[n+1];
+        result = new long[n+1];
         for (int i = 1; i <= n; i++) {
-            timeList[i] = scanner.nextInt();
-        
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            times[i] = Long.parseLong(st.nextToken());
             while(true) {
-                int start = scanner.nextInt();
-                if(start == -1) break;
-
-                adjacencyList[start].add(i);
-                inDegree[i]++;
+                int v = Integer.parseInt(st.nextToken());
+                if(v == -1) break;
+                adjacencyList[v].add(i);
+                inDegree[i] ++;
             }
         }
 
-        Queue<Node> queue = new LinkedList<>();
-        int[] result = new int[n+1];
+        build();
+
+        StringBuilder sb = new StringBuilder();
         for (int i = 1; i <= n; i++) {
-            if(inDegree[i] == 0) {
-                queue.add(new Node(i, timeList[i]));
-            }
+            result[i] += times[i];
+            sb.append(result[i]).append("\n");
         }
-
-        while(!queue.isEmpty()) {
-            Node node = queue.poll();
-
-            for (Integer i : adjacencyList[node.index]) {
-                inDegree[i] --;
-                if(inDegree[i] == 0) queue.add(new Node(i, timeList[i]));
-                result[i] = Math.max(result[node.index] + timeList[node.index], result[i]);
-            }
-        }
-
-        for (int i = 1; i <= n; i++) {
-            System.out.println(result[i] + timeList[i]);
-        }
+        System.out.print(sb);
     }
 
-    static class Node {
-        int index;
-        int time;
+    static void build() {
 
-        public Node(int index, int time) {
-            this.index = index;
-            this.time = time;
+        Queue<Integer> queue = new LinkedList<>();
+
+        for (int i = 1; i <= n; i++) {
+            if(inDegree[i] == 0) queue.add(i);
+        }
+
+        while (!queue.isEmpty()) {
+            Integer poll = queue.poll();
+
+            for (Integer i : adjacencyList[poll]) {
+                inDegree[i] --;
+                result[i] = Math.max(result[i], result[poll] + times[poll]);
+
+                if(inDegree[i] == 0) {
+                    queue.add(i);
+                }
+            }
         }
     }
 }
