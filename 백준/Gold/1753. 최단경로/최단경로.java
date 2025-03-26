@@ -2,78 +2,85 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int n;
+    static ArrayList<Info>[] adjacencyList;
+    static long[] result;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int v = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         int e = Integer.parseInt(st.nextToken());
 
-        st = new StringTokenizer(br.readLine());
-        int start = Integer.parseInt(st.nextToken());
-
-        ArrayList<Node>[] adjacencyList = new ArrayList[v+1];
-        for (int i = 0; i <= v; i++) {
+        adjacencyList = new ArrayList[n+1];
+        for (int i = 1; i <= n; i++) {
             adjacencyList[i] = new ArrayList<>();
         }
 
+        int start = Integer.parseInt(br.readLine());
         for (int i = 0; i < e; i++) {
             st = new StringTokenizer(br.readLine());
-            int from = Integer.parseInt(st.nextToken());
-            int to = Integer.parseInt(st.nextToken());
+
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
             int value = Integer.parseInt(st.nextToken());
 
-            adjacencyList[from].add(new Node(to, value));
+            adjacencyList[u].add(new Info(v, value));
         }
 
-        final int INF = 99999999;
-        int[] result = new int[v+1];
-        for (int i = 1; i <= v; i++) {
-            if(i!=start) result[i] = INF;
+        result = new long[n+1];
+        for (int i = 0; i <= n; i++) {
+            result[i] = Long.MAX_VALUE;
         }
 
-        boolean[] visit = new boolean[v+1];
-        Queue<Integer> queue = new LinkedList<>();
-        queue.add(start);
-        while(!queue.isEmpty()) {
-            Integer poll = queue.poll();
-            visit[poll] = true;
+        dijkstra(start);
 
-            for (Node node : adjacencyList[poll]) {
-                result[node.ind] = Math.min(result[node.ind], result[poll] + node.value);
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            sb.append((result[i] == Long.MAX_VALUE) ? "INF" : result[i]).append("\n");
+        }
+
+        System.out.print(sb);
+    }
+
+    static void dijkstra(int start) {
+        PriorityQueue<Info> pq = new PriorityQueue<>((a, b) -> Long.compare(a.value, b.value));
+        result[start] = 0;
+        pq.add(new Info(start, 0));
+
+        while (!pq.isEmpty()) {
+            Info current = pq.poll();
+
+            if (result[current.node] < current.value) {
+                continue; // 이미 더 짧은 경로를 찾음
             }
 
-            int min = INF;
-            int ind = 0;
-            for (int i = 1; i <= v; i++) {
-                if(!visit[i] && min > result[i]) {
-                    min = result[i];
-                    ind = i;
+            for (Info info : adjacencyList[current.node]) {
+                long newDist = result[current.node] + info.value;
+
+                if (newDist < result[info.node]) {
+                    result[info.node] = newDist;
+                    pq.add(new Info(info.node, newDist));
                 }
             }
-            if(ind == 0) break;
-            queue.add(ind);
-        }
-
-        for (int i = 1; i <= v; i++) {
-            System.out.println((result[i] != INF) ? result[i] : "INF");
         }
     }
 
-    static class Node {
-        int ind;
-        int value;
 
-        public Node(int ind, int value) {
-            this.ind = ind;
+    static class Info {
+        int node;
+        long value;
+
+        public Info(int node, long value) {
+            this.node = node;
             this.value = value;
         }
     }
 }
-
