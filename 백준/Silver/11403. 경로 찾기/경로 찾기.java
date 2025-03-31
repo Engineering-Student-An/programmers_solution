@@ -4,39 +4,54 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int n;
+    static long[][] result;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(br.readLine());
 
-        int[][] arr = new int[n][n];
-
+        result = new long[n][n];
         for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < n; j++) {
-                arr[i][j] = Integer.parseInt(st.nextToken());
+                result[i][j] = Long.MAX_VALUE;
             }
         }
 
+        for (int i = 0; i < n; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                int now = Integer.parseInt(st.nextToken());
+                if(now != 0) result[i][j] = 1;
+            }
+        }
+
+        floydWarshall();
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                sb.append(result[i][j] == Long.MAX_VALUE ? 0 : 1).append(" ");
+            }
+            sb.append("\n");
+        }
+
+        System.out.print(sb);
+    }
+
+    static void floydWarshall() {
+
         for (int k = 0; k < n; k++) {
-            for (int start = 0; start < n; start++) {
-                for (int end = 0; end < n; end++) {
-                    if(arr[start][end] == 0) {
-                        if(arr[start][k] != 0 && arr[k][end] != 0) {
-                            arr[start][end] = 1;
-                        }
+            for (int i = 0; i < n; i++) {
+                for (int j = 0; j < n; j++) {
+                    if(result[i][k] != Long.MAX_VALUE && result[k][j] != Long.MAX_VALUE) {
+                        result[i][j] = Math.min(result[i][j], result[i][k] + result[k][j]);
                     }
                 }
             }
-        }
-
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                System.out.print(arr[i][j] + " ");
-            }
-            System.out.println();
         }
     }
 }
