@@ -2,54 +2,55 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static int n;
-    static List<Integer>[] adjacencyList;
-    static int[] parents;
-    static boolean[] visit;
-
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = Integer.parseInt(st.nextToken());
-        parents = new int[n+1];
-        visit = new boolean[n+1];
+        int n = Integer.parseInt(br.readLine());
 
-        adjacencyList = new ArrayList[n+1];
-        for (int i = 0; i < n + 1; i++) {
+        ArrayList<Integer>[] adjacencyList = new ArrayList[n + 1];
+        for (int i = 1; i <= n; i++) {
             adjacencyList[i] = new ArrayList<>();
         }
 
-        for (int i = 0; i < n-1; i++) {
-            st = new StringTokenizer(br.readLine());
-            int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
+        for (int i = 0; i < n - 1; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int u = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
 
-            adjacencyList[a].add(b);
-            adjacencyList[b].add(a);
+            adjacencyList[u].add(v);
+            adjacencyList[v].add(u);
         }
 
-        dfs(1);
+        boolean[] visit = new boolean[n+1];
+        int[] parent = new int[n+1];
 
-        for (int i = 2; i < n+1; i++) {
-            System.out.println(parents[i]);
-        }
-    }
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(1);
+        visit[1] = true;
 
-    static void dfs(int node) {
+        while (!queue.isEmpty()) {
+            Integer now = queue.poll();
 
-        for (Integer i : adjacencyList[node]) {
-            if(!visit[i]) {
-                visit[i] = true;
-                parents[i] = node;
-                dfs(i);
+            for(Integer i : adjacencyList[now]) {
+                if(!visit[i]) {
+                    visit[i] = true;
+                    parent[i] = now;
+                    queue.add(i);
+                }
             }
         }
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 2; i <= n; i++) {
+            sb.append(parent[i] + "\n");
+        }
+
+        System.out.print(sb);
     }
 }
