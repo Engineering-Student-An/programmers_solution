@@ -1,64 +1,60 @@
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Scanner;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
 
+    static int n;
     static char[][] arr;
     static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = scanner.nextInt();
-        scanner.nextLine();
+        n = Integer.parseInt(st.nextToken());
+
         arr = new char[n][3];
         for (int i = 0; i < n; i++) {
-            String line = scanner.nextLine();
+            st = new StringTokenizer(br.readLine());
 
-            String[] split = line.split(" ");
-
-            arr[split[0].charAt(0) - 'A'][1] = split[0].charAt(0);
-            arr[split[0].charAt(0) - 'A'][0] = split[1].charAt(0);
-            arr[split[0].charAt(0) - 'A'][2] = split[2].charAt(0);
+            String p = st.nextToken();
+            String l = st.nextToken();
+            String r = st.nextToken();
+            arr[p.charAt(0) - 'A'][1] = p.charAt(0);
+            arr[p.charAt(0) - 'A'][0] = l.charAt(0);
+            arr[p.charAt(0) - 'A'][2] = r.charAt(0);
         }
 
-        first(0, 1);
+        vlr(0);
         sb.append("\n");
-        second(0, 1);
+        lvr(0);
         sb.append("\n");
-        third(0, 1);
+        lrv(0);
 
-        System.out.println(sb);
+        System.out.print(sb);
     }
 
-    private static void first(int i, int j) {
+    static void vlr(int index) {
+        sb.append(arr[index][1]);
 
-        if(arr[i][j] == '.') return;
-
-        sb.append(arr[i][j]);
-
-        if(arr[i][j-1] != '.') first(arr[i][j-1] - 'A', 1);
-        if(arr[i][j+1] != '.') first(arr[i][j+1] - 'A', 1);
-
+        if(arr[index][0] != '.') vlr(arr[index][0] - 'A');
+        if(arr[index][2] != '.') vlr(arr[index][2] - 'A');
     }
 
-    private static void second(int i, int j) {
+    static void lvr(int index) {
 
-        if(arr[i][j] == '.') return;
-
-        if(arr[i][j-1] != '.') second(arr[i][j-1] - 'A', 1);
-        sb.append(arr[i][j]);
-        if(arr[i][j+1] != '.') second(arr[i][j+1] - 'A', 1);
-
+        if(arr[index][0] != '.') lvr(arr[index][0] - 'A');
+        sb.append(arr[index][1]);
+        if(arr[index][2] != '.') lvr(arr[index][2] - 'A');
     }
 
-    private static void third(int i, int j) {
+    static void lrv(int index) {
 
-        if(arr[i][j] == '.') return;
-
-        if(arr[i][j-1] != '.') third(arr[i][j-1] - 'A', 1);
-        if(arr[i][j+1] != '.') third(arr[i][j+1] - 'A', 1);
-        sb.append(arr[i][j]);
+        if(arr[index][0] != '.') lrv(arr[index][0] - 'A');
+        if(arr[index][2] != '.') lrv(arr[index][2] - 'A');
+        sb.append(arr[index][1]);
     }
 }
