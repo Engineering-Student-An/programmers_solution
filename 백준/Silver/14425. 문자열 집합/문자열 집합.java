@@ -14,45 +14,36 @@ public class Main {
 
         Node root = new Node();
         for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            String word = st.nextToken();
-
+            String s = br.readLine();
             Node now = root;
-            for (int j = 0; j < word.length(); j++) {
-                char c = word.charAt(j);
-                if(now.next[c - 'a'] == null) {
-                    now.next[c - 'a'] = new Node();
+            for (int j = 0; j < s.length(); j++) {
+                if(now.next[s.charAt(j) - 'a'] == null) {
+                    now.next[s.charAt(j) - 'a'] = new Node();
                 }
-                now = now.next[c - 'a'];
+
+                now = now.next[s.charAt(j) - 'a'];
             }
-            now.isFinal = true;
+            now.isEnd = true;
         }
 
-
-        int result = 0;
+        int count = 0;
         for (int i = 0; i < m; i++) {
-            st = new StringTokenizer(br.readLine());
-            String word = st.nextToken();
+            String line = br.readLine();
 
             Node now = root;
-            for (int j = 0; j < word.length(); j++) {
-                char c = word.charAt(j);
-                if(now.next[c- 'a'] == null) {
-                    break;
-                }
-                now = now.next[c - 'a'];
-                if(j == word.length() - 1 && now.isFinal) {
-                    result ++;
-                    break;
-                }
+            for (int j = 0; j < line.length(); j++) {
+                if(now.next[line.charAt(j) - 'a'] == null) break;
+
+                now = now.next[line.charAt(j) - 'a'];
+                if(j == line.length() - 1 && now.isEnd) count ++;
             }
         }
 
-        System.out.println(result);
+        System.out.println(count);
     }
 
     static class Node {
         Node[] next = new Node[26];
-        boolean isFinal;
+        boolean isEnd;
     }
 }
