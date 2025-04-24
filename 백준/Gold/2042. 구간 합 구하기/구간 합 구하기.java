@@ -5,81 +5,85 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static long[] segmentTree;
+    static int n, k;
+    static long[] arr;
+    static int size;
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        long n = Long.parseLong(st.nextToken());
-        long m = Long.parseLong(st.nextToken());
-        long s = Long.parseLong(st.nextToken());
-
-        long k = 0;
-        for (int i = 0; i <= 20; i++) {
-            if(Math.pow(2, i) >= n) {
-                k = i;
-                break;
-            }
-        }
-        long fullIndex = (long) Math.pow(2, k) * 2;
-        long dataStartIndex = (long) Math.pow(2, k);
-        long dataInsert = dataStartIndex;
-
-        segmentTree = new long[(int) fullIndex];
-        for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
-            segmentTree[(int) dataInsert ++] = Long.parseLong(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        int t = Integer.parseInt(st.nextToken());
+        
+        k = 0;
+        while (Math.pow(2, k) <= n) {
+            k++;
         }
 
-        for (int i = (int) (dataStartIndex - 1); i > 0; i--) {
-            segmentTree[i] = segmentTree[i*2] + segmentTree[i*2 + 1];
+        size = (int) Math.pow(2, k+1);
+        arr = new long[size];
+        for (int i = size/2; i < size/2 + n; i++) {
+            arr[i] = Long.parseLong(br.readLine());
+        }
+
+        for (int i = size/2 - 1; i > 0; i--) {
+            arr[i] = arr[i*2] + arr[i*2 + 1];
         }
 
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < m + s; i++) {
+        for (int i = 0; i < m + t; i++) {
             st = new StringTokenizer(br.readLine());
+
             int a = Integer.parseInt(st.nextToken());
-            int b = Integer.parseInt(st.nextToken());
-            long c = Long.parseLong(st.nextToken());
+
 
             if(a == 1) {
-                change(b, c, dataStartIndex);
+                int b = Integer.parseInt(st.nextToken());
+                long c = Long.parseLong(st.nextToken());
+                change(b, c);
             } else if(a == 2) {
-                sb.append(partSum(b, (int) c, dataStartIndex)).append("\n");
+                int b = Integer.parseInt(st.nextToken());
+                int c = Integer.parseInt(st.nextToken());
+                sb.append(sum(b, c)).append("\n");
             }
         }
+
         System.out.print(sb);
     }
 
-    static void change(int b, long c, long dataStartIndex) {
+    static void change(int index, long value) {
 
-        int targetIndex = (int) (b + dataStartIndex - 1);
-        long difference = c - segmentTree[targetIndex];
-
-        while(targetIndex > 0) {
-            segmentTree[targetIndex] += difference;
-            targetIndex /= 2;
+        index += (int) (Math.pow(2, k) - 1);
+        long diff = value - arr[index];
+        arr[index] = value;
+        index /= 2;
+        while(index > 0) {
+            arr[index] += diff;
+            index /= 2;
         }
     }
 
-    static long partSum(int startIndex, int endIndex, long dataStartIndex) {
+    static long sum(int startIdx, int endIdx) {
 
-        startIndex = Math.toIntExact(startIndex + dataStartIndex - 1);
-        endIndex = Math.toIntExact(endIndex + dataStartIndex - 1);
+        startIdx += (int) (Math.pow(2, k) - 1);
+        endIdx += (int) (Math.pow(2, k) - 1);
 
         long result = 0;
-        while(startIndex <= endIndex) {
-            if(startIndex % 2 == 1) result += segmentTree[startIndex];
-            if(endIndex % 2 == 0) result += segmentTree[endIndex];
+        while (startIdx <= endIdx) {
+            if(startIdx % 2 == 1) {
+                result += arr[startIdx];
+            }
+            if(endIdx % 2 == 0) {
+                result += arr[endIdx];
+            }
 
-            startIndex = (startIndex + 1) / 2;
-            endIndex = (endIndex - 1) / 2;
+            startIdx = (startIdx + 1) / 2;
+            endIdx = (endIdx - 1) / 2;
         }
 
         return result;
     }
-
-
 }
