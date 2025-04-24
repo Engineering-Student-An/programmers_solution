@@ -5,6 +5,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
+    static int n, m, k, size;
     static long[] segmentTree;
 
     public static void main(String[] args) throws IOException {
@@ -12,57 +13,51 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        
-        int k = 0;
-        while(true) {
-            if(Math.pow(2, k) >= n) {
-                break;
-            }
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
+
+        k = 0;
+        while(Math.pow(2, k) <= n) {
             k ++;
         }
-        
-        int fullIndex = (int) (Math.pow(2, k) * 2);
-        int dataStartIndex = (int) Math.pow(2, k);
-        int temp = dataStartIndex;
-        
-        segmentTree = new long[fullIndex];
-        for (int i = 0; i < n; i++) {
-            segmentTree[temp ++] = Long.parseLong(br.readLine());
+
+        size = (int) Math.pow(2, k+1);
+        segmentTree = new long[size];
+        for (int i = size/2; i < size/2 + n; i++) {
+            segmentTree[i] = Long.parseLong(br.readLine());
         }
-        for (int i = temp; i < fullIndex; i++) {
-            segmentTree[i] = Integer.MAX_VALUE;
-        }
-        
-        for (int i = dataStartIndex - 1; i > 0; i--) {
+
+        for (int i = size/2-1; i > 0; i--) {
             segmentTree[i] = Math.min(segmentTree[i * 2], segmentTree[i * 2 + 1]);
         }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < m; i++) {
             st = new StringTokenizer(br.readLine());
-            int startIndex = Integer.parseInt(st.nextToken());
-            int endIndex = Integer.parseInt(st.nextToken());
+            int startIdx = Integer.parseInt(st.nextToken());
+            int endIdx = Integer.parseInt(st.nextToken());
 
-            sb.append(minValue(startIndex, endIndex, dataStartIndex)).append("\n");
+            sb.append(min(startIdx, endIdx)).append("\n");
         }
 
         System.out.print(sb);
     }
 
-    static long minValue(int startIndex, int endIndex, int dataStartIndex) {
+    static long min(int startIdx, int endIdx) {
+        startIdx += (int)(Math.pow(2, k) - 1);
+        endIdx += (int)(Math.pow(2, k) - 1);
 
-        startIndex = startIndex + dataStartIndex - 1;
-        endIndex = endIndex + dataStartIndex - 1;
+        long result = Long.MAX_VALUE;
+        while(startIdx <= endIdx) {
+            if(startIdx % 2 == 1) {
+                result = Math.min(segmentTree[startIdx], result);
+            }
+            if(endIdx % 2 == 0) {
+                result = Math.min(segmentTree[endIdx], result);
+            }
 
-        long result = Integer.MAX_VALUE;
-        while (startIndex <= endIndex) {
-            if(startIndex % 2 == 1) result = Math.min(result, segmentTree[startIndex]);
-            if(endIndex % 2 == 0) result = Math.min(result, segmentTree[endIndex]);
-
-            startIndex = (startIndex + 1) / 2;
-            endIndex = (endIndex - 1) / 2;
+            startIdx = (startIdx + 1) / 2;
+            endIdx = (endIdx - 1) / 2;
         }
 
         return result;
