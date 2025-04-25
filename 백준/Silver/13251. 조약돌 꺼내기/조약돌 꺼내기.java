@@ -7,20 +7,19 @@ public class Main {
 
         int m = scanner.nextInt();
 
+        int[] colors = new int[m];
         int sum = 0;
-        int[] num = new int[m];
         for (int i = 0; i < m; i++) {
-            num[i] = scanner.nextInt();
-            sum += num[i];
+            colors[i] = scanner.nextInt();
+            sum += colors[i];
         }
 
         int k = scanner.nextInt();
-
         double result = 0.0;
         for (int i = 0; i < m; i++) {
             double now = 1.0;
-            for (int j = num[i]; j > num[i]-k; j--) {
-                now *= (double) (j) / (sum + j - num[i]);
+            for (int j = 0; j < k; j++) {
+                now *= (double) (colors[i] - j) / (sum - j);
             }
             result += now;
         }
