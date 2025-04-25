@@ -1,28 +1,34 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int t = Integer.parseInt(br.readLine());
 
-        long[][] arr = new long[31][31];
-        for (int i = 0; i < 31; i++) {
-            arr[i][0] = 1;
+        long[][] comb = new long[30][30];
+        for (int i = 0; i < 30; i++) {
+            comb[i][0] = 1;
         }
 
-        for (int i = 1; i < 31; i++) {
-            for (int j = 1; j < 31; j++) {
-                arr[i][j] = arr[i-1][j-1] + arr[i-1][j];
+        for (int i = 1; i < 30; i++) {
+            for (int j = 1; j < 30; j++) {
+                comb[i][j] = comb[i-1][j] + comb[i-1][j-1];
             }
         }
 
-        int t = scanner.nextInt();
+        StringBuilder sb = new StringBuilder();
+        for (int tt = 0; tt < t; tt++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int n = Integer.parseInt(st.nextToken());
+            int m = Integer.parseInt(st.nextToken());
 
-        for (int tc = 0; tc < t; tc++) {
-            int k = scanner.nextInt();
-            int n = scanner.nextInt();
-
-            System.out.println(arr[n][k]);
+            sb.append(comb[m][n]).append("\n");
         }
+
+        System.out.print(sb);
     }
 }
