@@ -7,40 +7,33 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         int n = Integer.parseInt(br.readLine());
 
-        Work[] arr = new Work[n+1];
+        Info[] arr = new Info[n+1];
         for (int i = 1; i <= n; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-
-            int d = Integer.parseInt(st.nextToken());
-            int p = Integer.parseInt(st.nextToken());
-
-            arr[i] = new Work(d, p);
+            arr[i] = new Info(Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken()));
         }
 
         long[] result = new long[n+2];
-        for (int i = n; i > 0; i--) {
-            if(arr[i].day == 1) {
-                result[i] = result[i+1] + arr[i].price;
-            } else if(i + arr[i].day <= n + 1){
-                result[i] = Math.max(result[i + 1], result[i + arr[i].day] + arr[i].price);
-            } else {
-                result[i] = result[i+1];
-            }
+        for (int i = 1; i <= n; i++) {
+            result[i] = Math.max(result[i-1], result[i]);
+
+            int next = i + arr[i].days;
+            if(next > n+1) continue;
+            result[next] = Math.max(result[i] + arr[i].value, result[next]);
         }
 
-        System.out.println(result[1]);
+        System.out.println(Math.max(result[n], result[n+1]));
     }
 
-    static class Work {
-        int day;
-        int price;
+    static class Info {
+        int days;
+        int value;
 
-        public Work(int day, int price) {
-            this.day = day;
-            this.price = price;
+        public Info(int days, int value) {
+            this.days = days;
+            this.value = value;
         }
     }
 }
