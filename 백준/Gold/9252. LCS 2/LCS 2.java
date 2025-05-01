@@ -1,56 +1,49 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        String first = br.readLine();
+        String second = br.readLine();
 
-        String first = scanner.nextLine();
-        String second = scanner.nextLine();
+        int secondLen = second.length();
+        int firstLen = first.length();
+        int[][] lcs = new int[secondLen + 1][firstLen + 1];
 
-        int f = first.length();
-        int s = second.length();
-        int[][] lcs = new int[f + 1][s + 1];
+        for (int i = 1; i <= secondLen; i++) {
+            for (int j = 1; j <= firstLen; j++) {
+                char f = first.charAt(j - 1);
+                char s = second.charAt(i - 1);
 
-        for (int i = 1; i < f + 1; i++) {
-            for (int j = 1; j < s + 1; j++) {
+                if (f != s) lcs[i][j] = Math.max(lcs[i - 1][j], lcs[i][j - 1]);
+                else lcs[i][j] = lcs[i - 1][j - 1] + 1;
 
-                if(first.charAt(i-1) == second.charAt(j-1)) {
-                    lcs[i][j] = lcs[i-1][j-1] + 1;
-                } else {
-                    lcs[i][j] = Math.max(lcs[i-1][j], lcs[i][j-1]);
-                }
             }
         }
 
-        int len = lcs[f][s];
-        System.out.println(len);
-
-        if (len > 0) {
-            int row = f;
-            int col = s;
+        System.out.println(lcs[secondLen][firstLen]);
+        if (lcs[secondLen][firstLen] > 0) {
             String result = "";
+            int i = secondLen;
+            int j = firstLen;
 
-            while(row >= 1 && col >= 1) {
-                if(first.charAt(row - 1) == second.charAt(col - 1)) {
-                    result += first.charAt(row - 1);
-                    row --;
-                    col --;
+            while (i >= 1 && j >= 1) {
+                if (first.charAt(j - 1) == second.charAt(i - 1)) {
+                    result = first.charAt(j - 1) + result;
+                    i--;
+                    j--;
                 } else {
-                    if(lcs[row-1][col] > lcs[row][col-1]) {
-                        row --;
+                    if (lcs[i - 1][j] > lcs[i][j - 1]) {
+                        i--;
                     } else {
-                        col --;
+                        j--;
                     }
                 }
             }
-
-            StringBuilder sb = new StringBuilder();
-            for (int i = result.length() - 1; i >= 0; i--) {
-                sb.append(result.charAt(i));
-            }
-
-            System.out.print(sb);
+            System.out.println(result);
         }
     }
 }
