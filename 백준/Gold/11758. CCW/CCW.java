@@ -1,24 +1,24 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
-        Scanner scanner = new Scanner(System.in);
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
-        int x1 = scanner.nextInt();
-        int y1 = scanner.nextInt();
-        int x2 = scanner.nextInt();
-        int y2 = scanner.nextInt();
-        int x3 = scanner.nextInt();
-        int y3 = scanner.nextInt();
-
-        int ccw = (x1 * y2 + x2 * y3 + x3 * y1) - (x2 * y1 + x3 * y2 + x1 * y3);
-        if(ccw < 0) {
-            System.out.println(-1);
-        } else if(ccw == 0) {
-            System.out.println(0);
-        } else {
-            System.out.println(1);
+        int[] x = new int[3];
+        int[] y = new int[3];
+        for (int i = 0; i < 3; i++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            x[i] = Integer.parseInt(st.nextToken());
+            y[i] = Integer.parseInt(st.nextToken());
         }
+
+        int ccw = (x[0] * y[1] + x[1] * y[2] + x[2] * y[0]) - (x[2] * y[1] + x[1] * y[0] + x[0] * y[2]);
+        if(ccw < 0) System.out.println(-1);
+        else if(ccw == 0) System.out.println(0);
+        else System.out.println(1);
     }
 }
