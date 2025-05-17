@@ -14,41 +14,43 @@ public class Main {
         int n = Integer.parseInt(st.nextToken());
         int l = Integer.parseInt(st.nextToken());
 
-        Deque<Info> deque = new LinkedList<>();
-        st = new StringTokenizer(br.readLine());
         int[] arr = new int[n];
+        st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
         }
 
-        StringBuilder sb = new StringBuilder();
-        deque.add(new Info(0, arr[0]));
-        sb.append(deque.getFirst().value).append(" ");
+        Deque<Info> deque = new LinkedList<>();
+        deque.add(new Info(arr[0], 0));
 
+        StringBuilder sb = new StringBuilder();
+        sb.append(arr[0]).append(" ");
         for (int i = 1; i < n; i++) {
 
-            while(!deque.isEmpty() && deque.getLast().value > arr[i]) {
-                deque.removeLast();
-            }
-            deque.addLast(new Info(i, arr[i]));
+            // l 넘은 수는 제거
+            if(i - deque.getFirst().index >= l) deque.removeFirst();
 
-            if(i - deque.getFirst().index >= l) {
-                deque.removeFirst();
+            // 지금 수 보다 큰 수는 제거
+            while(!deque.isEmpty()) {
+                if(deque.getLast().value > arr[i]) {
+                    deque.removeLast();
+                } else break;
             }
+            deque.addLast(new Info(arr[i], i));
 
             sb.append(deque.getFirst().value).append(" ");
         }
 
-        System.out.print(sb);
+        System.out.println(sb);
     }
 
     static class Info {
-        int index;
         int value;
+        int index;
 
-        public Info(int index, int value) {
-            this.index = index;
+        public Info(int value, int index) {
             this.value = value;
+            this.index = index;
         }
     }
 }
