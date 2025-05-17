@@ -8,7 +8,6 @@ public class Main {
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         int n = Integer.parseInt(br.readLine());
 
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -20,32 +19,29 @@ public class Main {
         int[] result = new int[n];
         Stack<Info> stack = new Stack<>();
         for (int i = 0; i < n; i++) {
-
             int now = arr[i];
-
-            while(!stack.isEmpty() && stack.peek().value < now) {
-                Info info = stack.pop();
-                result[info.index] = now;
+            while (!stack.isEmpty() && stack.peek().value < now) {
+                Info pop = stack.pop();
+                result[pop.index] = now;
             }
 
-            stack.push(new Info(i, now));
+            stack.push(new Info(now, i));
         }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < n; i++) {
-            sb.append((result[i] == 0) ? -1 : result[i]).append(" ");
+            sb.append(result[i] == 0 ? -1 : result[i]).append(" ");
         }
-
         System.out.println(sb);
     }
 
     static class Info {
-        int index;
         int value;
+        int index;
 
-        public Info(int index, int value) {
-            this.index = index;
+        public Info(int value, int index) {
             this.value = value;
+            this.index = index;
         }
     }
 }
