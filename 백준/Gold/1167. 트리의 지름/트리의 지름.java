@@ -1,3 +1,5 @@
+import org.w3c.dom.Node;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -5,8 +7,9 @@ import java.util.*;
 
 public class Main {
 
-    static List<Info>[] adjacencyList;
     static int n;
+    static List<Info>[] adjacencyList;
+    static long[] result;
 
     public static void main(String[] args) throws IOException {
 
@@ -15,72 +18,69 @@ public class Main {
         n = Integer.parseInt(br.readLine());
 
         adjacencyList = new ArrayList[n+1];
-        for (int i = 1; i <= n; i++) {
-            adjacencyList[i] = new ArrayList<>();
-        }
-
         for (int i = 0; i < n; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
-            int start = Integer.parseInt(st.nextToken());
 
+            int index = Integer.parseInt(st.nextToken());
+            adjacencyList[index] = new ArrayList<>();
             while(true) {
-                int end = Integer.parseInt(st.nextToken());
-                if(end == -1) break;
+                int u = Integer.parseInt(st.nextToken());
+                if(u == -1) break;
                 long value = Long.parseLong(st.nextToken());
 
-                adjacencyList[start].add(new Info(end, value));
+                adjacencyList[index].add(new Info(u, value));
             }
         }
 
-        long[] distance = new long[n+1];
-        bfs(1, distance);
+        result = new long[n+1];
+        bfs(1);
 
-        long max = distance[1];
-        int startIndex = 1;
-        for (int i = 2; i <= n; i++) {
-            if(max < distance[i]) {
-                startIndex = i;
-                max = distance[i];
+        long max = -1;
+        int index = 0;
+        for (int i = 1; i <= n; i++) {
+            if(max < result[i]) {
+                index = i;
+                max = result[i];
             }
         }
 
-        distance = new long[n+1];
-        bfs(startIndex, distance);
+        result = new long[n+1];
+        bfs(index);
 
-        max = distance[1];
-        for (int i = 2; i <= n; i++) {
-            max = Math.max(max, distance[i]);
+        max = -1;
+        for (int i = 1; i <= n; i++) {
+            max = Math.max(max, result[i]);
         }
 
         System.out.println(max);
     }
 
-    static void bfs(int num, long[] distance) {
+    static void bfs(int start) {
 
         boolean[] visit = new boolean[n+1];
-        visit[num] = true;
+        visit[start] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(start);
 
-        Queue<Info> queue = new LinkedList<>();
-        queue.add(new Info(num, 0));
-
-        while (!queue.isEmpty()) {
-            Info poll = queue.poll();
-            for (Info info : adjacencyList[poll.node]) {
-                if(!visit[info.node]) {
-                    visit[info.node] = true;
-                    distance[info.node] = distance[poll.node] + info.value;
-                    queue.add(info);
+        while(!queue.isEmpty()) {
+            Integer now = queue.poll();
+            for (Info info : adjacencyList[now]) {
+                int next = info.u;
+                if(!visit[next]) {
+                    visit[next] = true;
+                    queue.add(next);
+                    result[next] = result[now] + info.value;
                 }
             }
         }
     }
 
     static class Info {
-        int node;
+        int u;
         long value;
 
-        public Info(int node, long value) {
-            this.node = node;
+        public Info(int u, long value) {
+            this.u = u;
             this.value = value;
         }
     }
