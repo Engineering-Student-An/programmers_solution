@@ -4,54 +4,50 @@ import java.io.InputStreamReader;
 import java.util.StringTokenizer;
 
 public class Main {
-
-    static int n, m;
-    static int[] arr;
-
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        n = Integer.parseInt(st.nextToken());
-        m = Integer.parseInt(st.nextToken());
 
-        arr = new int[n];
-        int left = 0;
-        int right = 0;
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+
+        int[] arr = new int[n];
         st = new StringTokenizer(br.readLine());
+        int start = 1;
+        int end = 0;
         for (int i = 0; i < n; i++) {
             arr[i] = Integer.parseInt(st.nextToken());
-            left = Math.max(left, arr[i]);
-            right += arr[i];
+            end += arr[i];
         }
 
-        int middle;
-        while(left <= right) {
-            middle = (left + right) / 2;
+        while(start <= end) {
 
-            if(isPossible(middle)) {
-                right = middle - 1;
+            int middle = (start + end) / 2;
+            int count = 1;
+            int sum = 0;
+
+            for (int i = 0; i < n; i++) {
+                if(arr[i] > middle) {
+                    count = m+1;
+                    break;
+                }
+
+                if(sum + arr[i] > middle) {
+                    sum = arr[i];
+                    count ++;
+                } else {
+                    sum += arr[i];
+                }
+            }
+
+            if(count <= m) {
+                end = middle-1;
             } else {
-                left = middle + 1;
+                start = middle + 1;
             }
         }
 
-        System.out.println(left);
-    }
-
-    static boolean isPossible(int num) {
-
-        int sum = 0;
-        int count = 1;
-        for (int i = 0; i < n; i++) {
-            if(sum + arr[i] > num) {
-                sum = 0;
-                count ++;
-            }
-
-            sum += arr[i];
-        }
-
-        return (count <= m);
+        System.out.println(start);
     }
 }
