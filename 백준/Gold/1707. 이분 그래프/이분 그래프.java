@@ -8,70 +8,70 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static boolean result;
+    static int v, e;
+    static ArrayList<Integer>[] adjacencyList;
+    static int[] color;
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int k = Integer.parseInt(st.nextToken());
+        int testcase = Integer.parseInt(br.readLine());
 
-        for (int i = 0; i < k; i++) {
+        StringBuilder sb = new StringBuilder();
+        for (int t = 0; t < testcase; t++) {
+            StringTokenizer st = new StringTokenizer(br.readLine());
 
-            st = new StringTokenizer(br.readLine());
-            int v = Integer.parseInt(st.nextToken());
-            int e = Integer.parseInt(st.nextToken());
+            v = Integer.parseInt(st.nextToken());
+            e = Integer.parseInt(st.nextToken());
 
-            ArrayList<Integer>[] adjacencyList = new ArrayList[v+1];
-            for (int j = 0; j <= v; j++) {
-                adjacencyList[j] = new ArrayList<>();
+            adjacencyList = new ArrayList[v+1];
+            for (int i = 0; i <= v; i++) {
+                adjacencyList[i] = new ArrayList<>();
             }
 
-            for (int j = 0; j < e; j++) {
+            for (int i = 0; i < e; i++) {
                 st = new StringTokenizer(br.readLine());
-                int v1 = Integer.parseInt(st.nextToken());
-                int v2 = Integer.parseInt(st.nextToken());
+                int start = Integer.parseInt(st.nextToken());
+                int end = Integer.parseInt(st.nextToken());
 
-                adjacencyList[v1].add(v2);
-                adjacencyList[v2].add(v1);
+                adjacencyList[start].add(end);
+                adjacencyList[end].add(start);
             }
 
-            int[] visit = new int[v+1];
-            for (int j = 1; j <= v; j++) {
-                visit[j] = 0;
-            }
-
-            result = true;
-            for (int j = 1; j <= v; j++) {
-                if(visit[j] == 0) {
-                    bfs(j, adjacencyList, visit, 1);
+            boolean isPossible = true;
+            color = new int[v+1];
+            for (int i = 1; i <= v && isPossible; i++) {
+                if(color[i] == 0) {
+                    isPossible = bfs(i);
                 }
-                if(!result) break;
             }
-            System.out.println( (result) ? "YES" : "NO");
+
+
+            sb.append(isPossible ? "YES" : "NO").append("\n");
         }
+        System.out.print(sb);
     }
 
-    public static void bfs(int v, ArrayList<Integer>[] adjacencyList, int[] visit, int color) {
+    static boolean bfs(int start) {
 
-        visit[v] = color;
+        color[start] = 1;
+
         Queue<Integer> queue = new LinkedList<>();
-        queue.add(v);
+        queue.add(start);
 
         while (!queue.isEmpty()) {
-
-            Integer poll = queue.poll();
-            for(Integer i : adjacencyList[poll]) {
-                if(visit[i] == 0) {
-                    visit[i] = visit[poll] * -1;
-                    queue.add(i);
-                }
-                else if(visit[poll] + visit[i] != 0) {
-                    result = false;
-                    return;
+            Integer now = queue.poll();
+            for (Integer next : adjacencyList[now]) {
+                if(color[next] == 0) {
+                    color[next] = color[now] * -1;
+                    queue.add(next);
+                } else if (color[now] == color[next]) {
+                    return false;
                 }
             }
         }
+
+        return true;
     }
 }
