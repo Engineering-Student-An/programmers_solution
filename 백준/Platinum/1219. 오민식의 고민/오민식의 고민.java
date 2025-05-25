@@ -1,71 +1,119 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Main {
+
+    static int n, m;
+    static Info[] edgeList;
+    static ArrayList<Integer>[] adjacencyList;
+    static long[] result;
+    static long[] plusList;
+
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
-        int n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(st.nextToken());
         int start = Integer.parseInt(st.nextToken());
         int end = Integer.parseInt(st.nextToken());
-        int e = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
 
-        Edge[] edges = new Edge[e];
-        long[] result = new long[n];
-        int[] earn = new int[n];
-        Arrays.fill(result, Long.MIN_VALUE);
-
-        for (int i = 0; i < e; i++) {
-            st = new StringTokenizer(br.readLine());
-            int from = Integer.parseInt(st.nextToken());
-            int to = Integer.parseInt(st.nextToken());
-            int value = Integer.parseInt(st.nextToken());
-
-            edges[i] = new Edge(from, to, value * (-1));
+        edgeList = new Info[m];
+        adjacencyList = new ArrayList[n];
+        for (int i = 0; i < n; i++) {
+            adjacencyList[i] = new ArrayList<>();
         }
 
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+
+            edgeList[i] = new Info(s, e, v * -1);
+            adjacencyList[s].add(e);
+        }
+
+        plusList = new long[n];
         st = new StringTokenizer(br.readLine());
         for (int i = 0; i < n; i++) {
-            earn[i] = Integer.parseInt(st.nextToken());
+            plusList[i] = Long.parseLong(st.nextToken());
         }
 
-        // 벨만-포드
-        result[start] = earn[start];
-        for (int i = 0; i <= n + 100; i++) {
-            for (int j = 0; j < e; j++) {
-                if(result[edges[j].start] == Long.MIN_VALUE) continue;
-                else if(result[edges[j].start] == Long.MAX_VALUE) {
-                    result[edges[j].end] = Long.MAX_VALUE;
-                } else if(result[edges[j].end] < result[edges[j].start] + edges[j].value + earn[edges[j].end]) {
-                    result[edges[j].end] = result[edges[j].start] + edges[j].value + earn[edges[j].end];
+        result = new long[n];
+        for (int i = 0; i < n; i++) {
+            result[i] = Long.MIN_VALUE;
+        }
 
-                    if(i >= n-1) result[edges[j].end] = Long.MAX_VALUE;
+        if(bellmanFord(start, end)) {
+            System.out.println("Gee");
+        } else {
+            System.out.println( (result[end] != Long.MIN_VALUE) ? result[end] : "gg");
+        }
+
+    }
+
+    static boolean bellmanFord(int start, int end) {
+        result[start] = plusList[start];
+
+        for (int i = 0; i < n-1; i++) {
+            for (int j = 0; j < m; j++) {
+                Info now = edgeList[j];
+                if(result[now.s] != Long.MIN_VALUE && result[now.e] < result[now.s] + now.value + plusList[now.e]) {
+                    result[now.e] = result[now.s] + now.value + plusList[now.e];
                 }
             }
         }
 
-        if(result[end] == Long.MIN_VALUE) {
-            System.out.println("gg");
-        } else if(result[end] == Long.MAX_VALUE) {
-            System.out.println("Gee");
-        } else {
-            System.out.println(result[end]);
+        if(result[end] == Long.MIN_VALUE) return false;
+
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                Info now = edgeList[j];
+                if(result[now.s] != Long.MIN_VALUE && result[now.e] < result[now.s] + now.value + plusList[now.e]) {
+                    if(checkIsPossibleToReachEnd(now.e, end)) {
+                        return true;
+                    }
+                }
+            }
         }
+
+        return false;
     }
 
-    static class Edge {
-        int start;
-        int end;
-        int value;
+    static boolean checkIsPossibleToReachEnd(int from, int end) {
+        boolean[] visit = new boolean[n];
+        visit[from] = true;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(from);
 
-        public Edge(int start, int end, int value) {
-            this.start = start;
-            this.end = end;
+        while (!queue.isEmpty()) {
+            Integer now = queue.poll();
+            for (Integer i : adjacencyList[now]) {
+                if(!visit[i]) {
+                    queue.add(i);
+                    visit[i] = true;
+                }
+            }
+        }
+
+        return visit[end];
+    }
+
+    static class Info {
+        int s;
+        int e;
+        long value;
+
+        public Info(int s, int e, long value) {
+            this.s = s;
+            this.e = e;
             this.value = value;
         }
     }
