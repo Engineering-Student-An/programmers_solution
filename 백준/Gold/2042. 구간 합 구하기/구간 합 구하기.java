@@ -5,9 +5,8 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int n, k;
+    static int n, m, t, k;
     static long[] arr;
-    static int size;
 
     public static void main(String[] args) throws IOException {
 
@@ -15,75 +14,66 @@ public class Main {
         StringTokenizer st = new StringTokenizer(br.readLine());
 
         n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());
-        int t = Integer.parseInt(st.nextToken());
-        
-        k = 0;
-        while (Math.pow(2, k) <= n) {
-            k++;
+        m = Integer.parseInt(st.nextToken());
+        t = Integer.parseInt(st.nextToken());
+
+        k = 1;
+        while(k < n) {
+            k *= 2;
         }
 
-        size = (int) Math.pow(2, k+1);
+        int size = k * 2;
         arr = new long[size];
-        for (int i = size/2; i < size/2 + n; i++) {
-            arr[i] = Long.parseLong(br.readLine());
+        for (int i = 0; i < n; i++) {
+            arr[i + k] = Long.parseLong(br.readLine());
         }
 
-        for (int i = size/2 - 1; i > 0; i--) {
-            arr[i] = arr[i*2] + arr[i*2 + 1];
+        for (int i = k-1; i >= 1; i--) {
+            arr[i] = arr[i * 2] + arr[i * 2 + 1];
         }
 
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < m + t; i++) {
             st = new StringTokenizer(br.readLine());
-
             int a = Integer.parseInt(st.nextToken());
-
+            int b = Integer.parseInt(st.nextToken());
+            long c = Long.parseLong(st.nextToken());
 
             if(a == 1) {
-                int b = Integer.parseInt(st.nextToken());
-                long c = Long.parseLong(st.nextToken());
-                change(b, c);
-            } else if(a == 2) {
-                int b = Integer.parseInt(st.nextToken());
-                int c = Integer.parseInt(st.nextToken());
-                sb.append(sum(b, c)).append("\n");
+                swap(b, c);
+            } else {
+                sb.append(partSum(b, (int) c)).append("\n");
             }
         }
-
         System.out.print(sb);
     }
 
-    static void change(int index, long value) {
-
-        index += (int) (Math.pow(2, k) - 1);
-        long diff = value - arr[index];
-        arr[index] = value;
-        index /= 2;
-        while(index > 0) {
-            arr[index] += diff;
-            index /= 2;
+    static void swap(int s, long num) {
+        s += k - 1;
+        long diff = num - arr[s];
+        while(s >= 1) {
+            arr[s] += diff;
+            s /= 2;
         }
     }
 
-    static long sum(int startIdx, int endIdx) {
+    static long partSum(int s, int e) {
+        s += k - 1;
+        e += k - 1;
 
-        startIdx += (int) (Math.pow(2, k) - 1);
-        endIdx += (int) (Math.pow(2, k) - 1);
-
-        long result = 0;
-        while (startIdx <= endIdx) {
-            if(startIdx % 2 == 1) {
-                result += arr[startIdx];
+        long sum = 0;
+        while(s <= e) {
+            if(s % 2 == 1) {
+                sum += arr[s];
             }
-            if(endIdx % 2 == 0) {
-                result += arr[endIdx];
+            if(e % 2 == 0) {
+                sum += arr[e];
             }
 
-            startIdx = (startIdx + 1) / 2;
-            endIdx = (endIdx - 1) / 2;
+            s = (s + 1) / 2;
+            e = (e - 1) / 2;
         }
 
-        return result;
+        return sum;
     }
 }
