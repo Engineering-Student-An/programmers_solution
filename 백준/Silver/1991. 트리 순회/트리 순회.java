@@ -6,26 +6,22 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int n;
-    static char[][] arr;
+    static Info[] arr = new Info[26];
     static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = Integer.parseInt(st.nextToken());
+        n = Integer.parseInt(br.readLine());
 
-        arr = new char[n][3];
         for (int i = 0; i < n; i++) {
-            st = new StringTokenizer(br.readLine());
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            char m = st.nextToken().charAt(0);
+            char l = st.nextToken().charAt(0);
+            char r = st.nextToken().charAt(0);
 
-            String p = st.nextToken();
-            String l = st.nextToken();
-            String r = st.nextToken();
-            arr[p.charAt(0) - 'A'][1] = p.charAt(0);
-            arr[p.charAt(0) - 'A'][0] = l.charAt(0);
-            arr[p.charAt(0) - 'A'][2] = r.charAt(0);
+            arr[m - 'A'] = new Info(l, r, m);
         }
 
         vlr(0);
@@ -34,27 +30,42 @@ public class Main {
         sb.append("\n");
         lrv(0);
 
-        System.out.print(sb);
+        System.out.println(sb);
     }
 
     static void vlr(int index) {
-        sb.append(arr[index][1]);
+        if(arr[index] == null) return;
 
-        if(arr[index][0] != '.') vlr(arr[index][0] - 'A');
-        if(arr[index][2] != '.') vlr(arr[index][2] - 'A');
+        sb.append(arr[index].middle);
+
+        if(arr[index].left != '.') vlr(arr[index].left - 'A');
+        if(arr[index].right != '.') vlr(arr[index].right - 'A');
     }
 
     static void lvr(int index) {
+        if(arr[index] == null) return;
 
-        if(arr[index][0] != '.') lvr(arr[index][0] - 'A');
-        sb.append(arr[index][1]);
-        if(arr[index][2] != '.') lvr(arr[index][2] - 'A');
+        if(arr[index].left != '.') lvr(arr[index].left - 'A');
+        sb.append(arr[index].middle);
+        if(arr[index].right != '.') lvr(arr[index].right - 'A');
     }
 
     static void lrv(int index) {
+        if(arr[index] == null) return;
 
-        if(arr[index][0] != '.') lrv(arr[index][0] - 'A');
-        if(arr[index][2] != '.') lrv(arr[index][2] - 'A');
-        sb.append(arr[index][1]);
+        if(arr[index].left != '.') lrv(arr[index].left - 'A');
+        if(arr[index].right != '.') lrv(arr[index].right - 'A');
+        sb.append(arr[index].middle);
+    }
+
+
+    static class Info {
+        char left, right, middle;
+
+        public Info(char left, char right, char middle) {
+            this.left = left;
+            this.right = right;
+            this.middle = middle;
+        }
     }
 }
