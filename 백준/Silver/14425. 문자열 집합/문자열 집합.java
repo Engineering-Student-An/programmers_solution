@@ -1,3 +1,5 @@
+import org.w3c.dom.Node;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -14,14 +16,13 @@ public class Main {
 
         Node root = new Node();
         for (int i = 0; i < n; i++) {
-            String s = br.readLine();
-            Node now = root;
-            for (int j = 0; j < s.length(); j++) {
-                if(now.next[s.charAt(j) - 'a'] == null) {
-                    now.next[s.charAt(j) - 'a'] = new Node();
-                }
+            String line = br.readLine();
 
-                now = now.next[s.charAt(j) - 'a'];
+            Node now = root;
+            for (int j = 0; j < line.length(); j++) {
+                char c = line.charAt(j);
+                if(now.next[c - 'a'] == null) now.next[c - 'a'] = new Node();
+                now = now.next[c - 'a'];
             }
             now.isEnd = true;
         }
@@ -30,13 +31,19 @@ public class Main {
         for (int i = 0; i < m; i++) {
             String line = br.readLine();
 
+            boolean isExist = false;
             Node now = root;
             for (int j = 0; j < line.length(); j++) {
-                if(now.next[line.charAt(j) - 'a'] == null) break;
+                char c = line.charAt(j);
 
-                now = now.next[line.charAt(j) - 'a'];
-                if(j == line.length() - 1 && now.isEnd) count ++;
+                if(now.next[c-'a'] == null) break;
+
+                now = now.next[c - 'a'];
+
+                if(j == line.length() - 1 && now.isEnd) isExist = true;
             }
+
+            if(isExist) count ++;
         }
 
         System.out.println(count);
