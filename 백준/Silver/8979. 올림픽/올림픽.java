@@ -46,6 +46,7 @@ public class Main {
                 if (before.g != now.g || before.s != now.s || before.b != now.b) {
                     before = now;
                     rank += (same + 1);
+                    same = 0;
                 } else {
                     same++;
                 }
