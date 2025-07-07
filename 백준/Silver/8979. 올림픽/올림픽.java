@@ -39,16 +39,18 @@ public class Main {
         int same = 0;
         int rank = 1;
         Info before = arr[0];
-        for (int i = 1; i < n; i++) {
-            Info now = arr[i];
+        if(before.num != k) {
+            for (int i = 1; i < n; i++) {
+                Info now = arr[i];
 
-            if(before.g != now.g || before.s != now.s || before.b != now.b) {
-                before = now;
-                rank += (same + 1);
-            } else {
-                same ++;
+                if (before.g != now.g || before.s != now.s || before.b != now.b) {
+                    before = now;
+                    rank += (same + 1);
+                } else {
+                    same++;
+                }
+                if (arr[i].num == k) break;
             }
-            if(arr[i].num == k) break;
         }
 
         System.out.println(rank);
