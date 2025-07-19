@@ -1,0 +1,27 @@
+-- 코드를 작성해주세요
+WITH GRADE_CTE AS (
+    SELECT 
+        EMP_NO, 
+        AVG(SCORE) AS SCORE
+    FROM HR_GRADE
+    GROUP BY EMP_NO
+)
+SELECT 
+    E.EMP_NO,
+    E.EMP_NAME,
+    CASE
+        WHEN G.SCORE >= 96 THEN 'S'
+        WHEN G.SCORE >= 90 THEN 'A'
+        WHEN G.SCORE >= 80 THEN 'B'
+        ELSE 'C'
+    END AS GRADE,
+    CASE
+        WHEN G.SCORE >= 96 THEN (E.SAL / 5)
+        WHEN G.SCORE >= 90 THEN (E.SAL * 15 / 100)
+        WHEN G.SCORE >= 80 THEN (E.SAL / 10)
+        ELSE 0
+    END AS BONUS
+FROM HR_EMPLOYEES E
+JOIN GRADE_CTE G
+ON E.EMP_NO = G.EMP_NO
+ORDER BY E.EMP_NO ASC;
