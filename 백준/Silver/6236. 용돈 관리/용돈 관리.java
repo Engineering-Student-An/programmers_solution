@@ -24,7 +24,7 @@ public class Main {
             right += arr[i];
         }
 
-        while(left < right) {
+        while(left <= right) {
             int middle = (left + right) / 2;
 
             if(isPossible(middle)) {
