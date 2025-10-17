@@ -12,8 +12,13 @@ public class Main {
         int m = Integer.parseInt(st.nextToken());
         int k = Integer.parseInt(st.nextToken());
 
-        Info middle = (k == 0) ? new Info(0, 0) : new Info(k / m, (k % m) - 1);
-
+        Info middle;
+        if(k == 0) middle = new Info(0, 0);
+        else {
+            int r = (k % m == 0) ? k / m - 1 : k / m;
+            int c = (k % m == 0) ? m-1 : k % m - 1;
+            middle = new Info(r, c);
+        }
         int[][] result = new int[n][m];
         for (int i = 0; i <= middle.r; i++) result[i][0] = 1;
         for (int i = 0; i <= middle.c; i++) result[0][i] = 1;
